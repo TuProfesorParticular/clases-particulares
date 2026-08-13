@@ -1,0 +1,110 @@
+"use server";
+
+import { z } from "zod";
+import { mkdir, writeFile } from "fs/promises";
+import path from "path";
+import { revalidatePath } from "next/cache";
+import { prisma } from "@/lib/prisma";
+import { requireRole } from "@/lib/auth-helpers";
+
+const schema = z.object({
+  bio: z.string().max(1000).optional(),
+  pricePerHour: z.coerce.number().min(0).max(1000),
+  modality: z.enum(["in_person", "online", "both"]),
+  city: z.string().max(120).optional(),
+  postalCode: z.string().max(20).optional(),
+  experienceText: z.string().max(2000).optional(),
+});
+
+export type EditProfileState = {
+  success?: boolean;
+  error?: string;
+};
+
+export async function updateTeacherProfile(
+  _prevState: EditProfileState,
+  formData: FormData,
+): Promise<EditProfileState> {
+  const session = await requireRole("teacher");
+
+  const parsed = schema.safeParse({
+    bio: formData.get("bio") || undefined,
+    pricePerHour: formData.get("pricePerHour"),
+    modality: formData.get("modality"),
+    city: formData.get("city") || undefined,
+    postalCode: formData.get("postalCode") || undefined,
+    experienceText: formData.get("experienceText") || undefined,
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+
+  const subjectIds = formData.getAll("subjectIds").map(String).filter(Boolean);
+  const levels = formData
+    .getAll("levels")
+    .map(String)
+    .filter((level): level is "primaria" | "eso" | "bachillerato" | "universidad" | "adultos" =>
+      ["primaria", "eso", "bachillerato", "universidad", "adultos"].includes(level),
+    );
+
+  const teacherProfile = await prisma.teacherProfile.findUniqueOrThrow({
+    where: { userId: session.user.id },
+  });
+
+  const avatarFile = formData.get("avatar");
+  let avatarUrl: string | undefined;
+
+  if (avatarFile instanceof File && avatarFile.size > 0) {
+    const bytes = Buffer.from(await avatarFile.arrayBuffer());
+    const extension = path.extname(avatarFile.name) || ".jpg";
+    const filename = `${session.user.id}-${Date.now()}${extension}`;
+    const uploadsDir = path.join(process.cwd(), "public", "uploads", "avatars");
+    await mkdir(uploadsDir, { recursive: true });
+    await writeFile(path.join(uploadsDir, filename), bytes);
+    avatarUrl = `/uploads/avatars/${filename}`;
+  }
+
+  await prisma.$transaction([
+    prisma.teacherProfile.update({
+      where: { id: teacherProfile.id },
+      data: {
+        bio: parsed.data.bio,
+        pricePerHour: parsed.data.pricePerHour,
+        modality: parsed.data.modality,
+        city: parsed.data.city,
+        postalCode: parsed.data.postalCode,
+        experienceText: parsed.data.experienceText,
+      },
+    }),
+    prisma.teacherSubject.deleteMany({
+      where: { teacherProfileId: teacherProfile.id },
+    }),
+    ...(subjectIds.length > 0 && levels.length > 0
+      ? [
+          prisma.teacherSubject.createMany({
+            data: subjectIds.flatMap((subjectId) =>
+              levels.map((level) => ({
+                teacherProfileId: teacherProfile.id,
+                subjectId,
+                level,
+              })),
+            ),
+          }),
+        ]
+      : []),
+    ...(avatarUrl
+      ? [
+          prisma.user.update({
+            where: { id: session.user.id },
+            data: { avatarUrl },
+          }),
+        ]
+      : []),
+  ]);
+
+  revalidatePath("/panel/perfil");
+  revalidatePath(`/profesores/${teacherProfile.id}`);
+
+  return { success: true };
+}

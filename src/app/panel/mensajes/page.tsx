@@ -1,0 +1,61 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { requireSession } from "@/lib/auth-helpers";
+import { getConversationsForUser } from "@/lib/messages";
+
+export const metadata: Metadata = {
+  title: "Mensajes · ClasesParticulares",
+};
+
+export default async function MensajesPage() {
+  const session = await requireSession();
+  const conversations = await getConversationsForUser(session.user.id);
+
+  return (
+    <main className="mx-auto max-w-2xl px-4 py-10">
+      <h1 className="text-2xl font-bold text-slate-900">Mensajes</h1>
+
+      {conversations.length === 0 ? (
+        <p className="mt-8 rounded-lg border border-dashed border-slate-300 p-8 text-center text-slate-400">
+          Todavía no tienes conversaciones.
+        </p>
+      ) : (
+        <ul className="mt-6 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+          {conversations.map((conversation) => {
+            const isStudent = conversation.studentId === session.user.id;
+            const otherParty = isStudent
+              ? conversation.teacher
+              : conversation.student;
+            const lastMessage = conversation.messages[0];
+
+            return (
+              <li key={conversation.id}>
+                <Link
+                  href={`/panel/mensajes/${conversation.id}`}
+                  className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-slate-50"
+                >
+                  <div className="min-w-0">
+                    <p className="font-medium text-slate-900">
+                      {otherParty.name}
+                    </p>
+                    <p className="truncate text-sm text-slate-500">
+                      {lastMessage ? lastMessage.body : "Sin mensajes todavía"}
+                    </p>
+                  </div>
+                  {lastMessage && (
+                    <span className="flex-shrink-0 text-xs text-slate-400">
+                      {new Intl.DateTimeFormat("es-ES", {
+                        day: "2-digit",
+                        month: "2-digit",
+                      }).format(lastMessage.createdAt)}
+                    </span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </main>
+  );
+}

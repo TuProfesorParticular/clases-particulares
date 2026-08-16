@@ -88,13 +88,47 @@ documento del MVP.
 | `npm run db:seed` | Siembra el catálogo de materias |
 | `npm run db:studio` | Abre Prisma Studio para inspeccionar los datos |
 
+## Producción
+
+- **URL en vivo**: https://clases-particulares-three.vercel.app
+- **Hosting**: Vercel, proyecto `tu-profesor-particular/clases-particulares`
+- **Base de datos**: Supabase (Postgres), proyecto `clases-particulares`
+- **Emails**: Resend, remitente `onboarding@resend.dev` (dominio de pruebas — ver más abajo)
+- **Repositorio**: https://github.com/TuProfesorParticular/clases-particulares
+
+Variables de entorno configuradas en Vercel (Production): `DATABASE_URL`, `DIRECT_URL`,
+`AUTH_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `APP_URL`.
+
+Para volver a desplegar tras hacer cambios:
+
+```bash
+git add -A
+git commit -m "..."
+git push
+npx vercel deploy --prod
+```
+
+(El repositorio de GitHub no está conectado a Vercel todavía, así que los despliegues no son
+automáticos en cada push — hay que ejecutar `vercel deploy --prod` manualmente. Para activar
+despliegues automáticos, entra en el proyecto en vercel.com → Settings → Git → conecta el
+repositorio de GitHub.)
+
+Si se cambia el esquema de Prisma, aplicar la migración también en producción antes de desplegar:
+
+```bash
+DATABASE_URL="<DIRECT_URL de Supabase>" npx prisma migrate deploy
+```
+
 ## Qué falta (siguientes pasos)
 
-Funcionalmente el MVP descrito en el documento está completo (búsqueda, perfil de profesor,
-registro/login, edición de anuncio, mensajería interna, verificación de email, recuperación de
-contraseña, panel de admin). Queda pendiente, para pasar de este scaffold a producción:
+Funcionalmente el MVP descrito en el documento está completo y desplegado (búsqueda, perfil de
+profesor, registro/login, edición de anuncio, mensajería interna, verificación de email,
+recuperación de contraseña, panel de admin). Pendiente, cuando quieras ir más allá del MVP:
 
-- Desplegar en Vercel + base de datos real (Supabase/Railway) — ver sección siguiente
-- Conectar `RESEND_API_KEY` para el envío real de emails
-- Sustituir la subida local de avatares por Supabase Storage o Cloudinary
+- Verificar un dominio propio en Resend para poder enviar emails a cualquier alumno/profesor
+  (ahora mismo solo llegan a `carlosalazarguzman@gmail.com`, la cuenta de prueba de Resend)
+- Conectar el repositorio de GitHub a Vercel para despliegues automáticos
+- Dominio propio en vez de `*.vercel.app`
+- Sustituir la subida local de avatares (`public/uploads/`, no persiste en Vercel) por Supabase
+  Storage o Cloudinary
 - Revisar textos legales (términos, privacidad) antes de abrir el registro al público

@@ -72,10 +72,9 @@ servidor y copia el enlace manualmente. Para envíos reales, crea una cuenta en
 
 ## Fotos de perfil
 
-La subida de avatar en `/panel/perfil` guarda el archivo en `public/uploads/avatars/` (solo
-válido en desarrollo local; en la mayoría de hostings serverless el sistema de archivos no es
-persistente). Para producción, sustituir por Supabase Storage o Cloudinary tal como propone el
-documento del MVP.
+La subida de avatar en `/panel/perfil` usa Supabase Storage (bucket público `avatars`, creado con
+`npx tsx scripts/setup-storage.ts`). Necesita `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en el
+entorno (ver `.env.example`) — sin ellas, la subida falla con un error explícito.
 
 ## Scripts
 
@@ -97,21 +96,15 @@ documento del MVP.
 - **Repositorio**: https://github.com/TuProfesorParticular/clases-particulares
 
 Variables de entorno configuradas en Vercel (Production): `DATABASE_URL`, `DIRECT_URL`,
-`AUTH_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `APP_URL`.
+`AUTH_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `APP_URL`, `SUPABASE_URL`,
+`SUPABASE_SERVICE_ROLE_KEY`.
 
-Para volver a desplegar tras hacer cambios:
+El repositorio de GitHub está conectado a Vercel: cada `git push` a `main` despliega solo. Para
+forzar un despliegue manual:
 
 ```bash
-git add -A
-git commit -m "..."
-git push
 npx vercel deploy --prod
 ```
-
-(El repositorio de GitHub no está conectado a Vercel todavía, así que los despliegues no son
-automáticos en cada push — hay que ejecutar `vercel deploy --prod` manualmente. Para activar
-despliegues automáticos, entra en el proyecto en vercel.com → Settings → Git → conecta el
-repositorio de GitHub.)
 
 Si se cambia el esquema de Prisma, aplicar la migración también en producción antes de desplegar:
 
@@ -125,10 +118,7 @@ Funcionalmente el MVP descrito en el documento está completo y desplegado (bús
 profesor, registro/login, edición de anuncio, mensajería interna, verificación de email,
 recuperación de contraseña, panel de admin). Pendiente, cuando quieras ir más allá del MVP:
 
-- Verificar un dominio propio en Resend para poder enviar emails a cualquier alumno/profesor
-  (ahora mismo solo llegan a `carlosalazarguzman@gmail.com`, la cuenta de prueba de Resend)
-- Conectar el repositorio de GitHub a Vercel para despliegues automáticos
-- Dominio propio en vez de `*.vercel.app`
-- Sustituir la subida local de avatares (`public/uploads/`, no persiste en Vercel) por Supabase
-  Storage o Cloudinary
+- Comprar un dominio propio y verificarlo en Resend, para poder enviar emails a cualquier
+  alumno/profesor (ahora mismo solo llegan a `carlosalazarguzman@gmail.com`, la cuenta de prueba
+  de Resend) y usarlo también como dominio de la web en vez de `*.vercel.app`
 - Revisar textos legales (términos, privacidad) antes de abrir el registro al público

@@ -1,11 +1,10 @@
 "use server";
 
 import { z } from "zod";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth-helpers";
+import { uploadAvatar } from "@/lib/storage";
 
 const schema = z.object({
   bio: z.string().max(1000).optional(),
@@ -56,13 +55,7 @@ export async function updateTeacherProfile(
   let avatarUrl: string | undefined;
 
   if (avatarFile instanceof File && avatarFile.size > 0) {
-    const bytes = Buffer.from(await avatarFile.arrayBuffer());
-    const extension = path.extname(avatarFile.name) || ".jpg";
-    const filename = `${session.user.id}-${Date.now()}${extension}`;
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "avatars");
-    await mkdir(uploadsDir, { recursive: true });
-    await writeFile(path.join(uploadsDir, filename), bytes);
-    avatarUrl = `/uploads/avatars/${filename}`;
+    avatarUrl = await uploadAvatar(session.user.id, avatarFile);
   }
 
   await prisma.$transaction([

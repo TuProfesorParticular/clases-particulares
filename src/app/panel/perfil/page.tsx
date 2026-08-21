@@ -42,19 +42,28 @@ export default async function EditarPerfilPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Mi anuncio</h1>
+        <h1 className="text-2xl font-bold text-stone-900">Mi anuncio</h1>
         <span
           className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[teacherProfile.status]}`}
         >
           {STATUS_LABELS[teacherProfile.status]}
         </span>
       </div>
-      <p className="mt-1 text-sm text-slate-500">
+
+      <div className="mt-2 flex gap-4 text-sm">
+        <Link href="/panel/mensajes" className="text-teal-600 hover:underline">
+          Mensajes
+        </Link>
+        <Link href="/panel/materiales" className="text-teal-600 hover:underline">
+          Mis materiales
+        </Link>
+      </div>
+      <p className="mt-1 text-sm text-stone-500">
         Este es tu perfil público. {teacherProfile.status === "pending" && "Un administrador debe aprobarlo antes de que aparezca en las búsquedas."}
         {teacherProfile.status === "approved" && (
           <>
             {" "}
-            <Link href={`/profesores/${teacherProfile.id}`} className="text-blue-600 hover:underline">
+            <Link href={`/profesores/${teacherProfile.id}`} className="text-teal-600 hover:underline">
               Ver mi anuncio público
             </Link>
           </>

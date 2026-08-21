@@ -14,7 +14,7 @@ export default async function RestablecerContrasenaPage({
 
   return (
     <main className="mx-auto max-w-md px-4 py-12">
-      <h1 className="text-2xl font-bold text-slate-900">
+      <h1 className="text-2xl font-bold text-stone-900">
         Elige una nueva contraseña
       </h1>
 

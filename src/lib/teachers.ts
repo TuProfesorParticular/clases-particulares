@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export type TeacherSearchFilters = {
   subject?: string;
+  category?: string;
   city?: string;
   modality?: Modality;
   level?: Level;
@@ -18,12 +19,15 @@ export function getTeacherSearchResults(filters: TeacherSearchFilters) {
         ? { city: { contains: filters.city, mode: "insensitive" } }
         : {}),
       ...(filters.maxPrice ? { pricePerHour: { lte: filters.maxPrice } } : {}),
-      ...(filters.subject || filters.level
+      ...(filters.subject || filters.category || filters.level
         ? {
             subjects: {
               some: {
                 ...(filters.subject
                   ? { subject: { name: { equals: filters.subject, mode: "insensitive" } } }
+                  : {}),
+                ...(filters.category
+                  ? { subject: { category: { equals: filters.category, mode: "insensitive" } } }
                   : {}),
                 ...(filters.level ? { level: filters.level } : {}),
               },
@@ -51,4 +55,11 @@ export function getTeacherProfileById(id: string) {
 
 export function getAllSubjects() {
   return prisma.subject.findMany({ orderBy: { name: "asc" } });
+}
+
+export function getSubjectsByCategory(category: string) {
+  return prisma.subject.findMany({
+    where: { category: { equals: category, mode: "insensitive" } },
+    orderBy: { name: "asc" },
+  });
 }

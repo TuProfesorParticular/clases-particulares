@@ -1,5 +1,27 @@
 import "dotenv/config";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+
+async function ensureBucket(
+  supabase: SupabaseClient,
+  name: string,
+  options: { fileSizeLimit: string; allowedMimeTypes: string[] },
+) {
+  const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+  if (listError) throw listError;
+
+  if (buckets.some((b) => b.name === name)) {
+    console.log(`El bucket '${name}' ya existe.`);
+    return;
+  }
+
+  const { error } = await supabase.storage.createBucket(name, {
+    public: true,
+    ...options,
+  });
+
+  if (error) throw error;
+  console.log(`Bucket '${name}' creado (público).`);
+}
 
 async function main() {
   const url = process.env.SUPABASE_URL;
@@ -10,22 +32,23 @@ async function main() {
 
   const supabase = createClient(url, key);
 
-  const { data: buckets, error: listError } = await supabase.storage.listBuckets();
-  if (listError) throw listError;
-
-  if (buckets.some((b) => b.name === "avatars")) {
-    console.log("El bucket 'avatars' ya existe.");
-    return;
-  }
-
-  const { error } = await supabase.storage.createBucket("avatars", {
-    public: true,
+  await ensureBucket(supabase, "avatars", {
     fileSizeLimit: "5MB",
     allowedMimeTypes: ["image/png", "image/jpeg", "image/webp", "image/gif"],
   });
 
-  if (error) throw error;
-  console.log("Bucket 'avatars' creado (público).");
+  await ensureBucket(supabase, "materials", {
+    fileSizeLimit: "20MB",
+    allowedMimeTypes: [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-powerpoint",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "image/png",
+      "image/jpeg",
+    ],
+  });
 }
 
 main().catch((error) => {

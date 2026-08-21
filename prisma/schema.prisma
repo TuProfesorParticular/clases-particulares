@@ -77,22 +77,45 @@ model TeacherProfile {
   status         TeacherStatus @default(pending)
   createdAt      DateTime      @default(now())
 
-  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subjects TeacherSubject[]
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjects  TeacherSubject[]
+  materials Material[]
 
   @@index([status])
   @@index([city])
   @@map("teacher_profiles")
 }
 
+// Categorías de nivel superior que estructuran la web: Ciencias, Humanidades,
+// Oposiciones, Cursos oficiales (idiomas). Cada Subject pertenece a una.
 model Subject {
   id       String @id @default(cuid())
   name     String @unique
   category String
 
   teacherSubjects TeacherSubject[]
+  materials       Material[]
 
+  @@index([category])
   @@map("subjects")
+}
+
+// Material didáctico que un profesor deja disponible para descarga, asociado a una materia
+model Material {
+  id               String   @id @default(cuid())
+  title            String
+  description      String?
+  subjectId        String
+  teacherProfileId String
+  fileUrl          String
+  fileName         String
+  createdAt        DateTime @default(now())
+
+  subject        Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacherProfile TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+
+  @@index([subjectId])
+  @@map("materials")
 }
 
 // Tabla puente: un profesor puede impartir varias materias a distintos niveles

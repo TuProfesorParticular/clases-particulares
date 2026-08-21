@@ -6,25 +6,28 @@ export default async function Navbar() {
   const session = await auth();
 
   return (
-    <header className="border-b border-slate-200 bg-white">
+    <header className="border-b border-stone-200 bg-white">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link href="/" className="text-lg font-bold text-slate-900">
-          Clases<span className="text-blue-600">Particulares</span>
+        <Link href="/" className="text-lg font-bold text-stone-900">
+          Clases<span className="text-teal-600">Particulares</span>
         </Link>
         <div className="flex items-center gap-4 text-sm font-medium">
-          <Link href="/" className="text-slate-600 hover:text-slate-900">
+          <Link href="/" className="text-stone-600 hover:text-stone-900">
             Buscar profesores
+          </Link>
+          <Link href="/materiales" className="text-stone-600 hover:text-stone-900">
+            Materiales
           </Link>
 
           {session?.user ? (
             <>
-              <Link href="/panel" className="text-slate-600 hover:text-slate-900">
+              <Link href="/panel" className="text-stone-600 hover:text-stone-900">
                 Mi panel
               </Link>
               <form action={logout}>
                 <button
                   type="submit"
-                  className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
+                  className="rounded-lg border border-stone-300 px-4 py-2 text-stone-700 hover:bg-stone-50"
                 >
                   Cerrar sesión
                 </button>
@@ -32,12 +35,12 @@ export default async function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/iniciar-sesion" className="text-slate-600 hover:text-slate-900">
+              <Link href="/iniciar-sesion" className="text-stone-600 hover:text-stone-900">
                 Iniciar sesión
               </Link>
               <Link
                 href="/registro"
-                className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                className="rounded-lg bg-teal-600 px-4 py-2 text-white hover:bg-teal-700"
               >
                 Registrarse
               </Link>

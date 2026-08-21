@@ -5,6 +5,7 @@ type SearchFiltersProps = {
   subjects: Subject[];
   defaultValues: {
     materia?: string;
+    categoria?: string;
     ciudad?: string;
     modalidad?: string;
     nivel?: string;
@@ -13,24 +14,39 @@ type SearchFiltersProps = {
 };
 
 const selectClass =
-  "rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500";
+  "rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-700 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500";
 
 export default function SearchFilters({
   subjects,
   defaultValues,
 }: SearchFiltersProps) {
+  const subjectsByCategory = new Map<string, Subject[]>();
+  for (const subject of subjects) {
+    const list = subjectsByCategory.get(subject.category) ?? [];
+    list.push(subject);
+    subjectsByCategory.set(subject.category, list);
+  }
+
   return (
-    <form className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-5">
+    <form className="grid grid-cols-1 gap-3 rounded-xl border border-stone-200 bg-white p-4 shadow-sm sm:grid-cols-5">
+      {defaultValues.categoria && (
+        <input type="hidden" name="categoria" value={defaultValues.categoria} />
+      )}
+
       <select
         name="materia"
         defaultValue={defaultValues.materia ?? ""}
         className={selectClass}
       >
         <option value="">Todas las materias</option>
-        {subjects.map((subject) => (
-          <option key={subject.id} value={subject.name}>
-            {subject.name}
-          </option>
+        {[...subjectsByCategory.entries()].map(([category, items]) => (
+          <optgroup key={category} label={category}>
+            {items.map((subject) => (
+              <option key={subject.id} value={subject.name}>
+                {subject.name}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </select>
 
@@ -79,7 +95,7 @@ export default function SearchFilters({
 
       <button
         type="submit"
-        className="col-span-full rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-700 sm:col-span-5"
+        className="col-span-full rounded-lg bg-teal-600 py-2 text-sm font-semibold text-white hover:bg-teal-700 sm:col-span-5"
       >
         Buscar
       </button>

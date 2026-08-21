@@ -8,7 +8,7 @@ import { updateTeacherProfile, type EditProfileState } from "./actions";
 const initialState: EditProfileState = {};
 
 const inputClass =
-  "mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500";
+  "mt-1 block w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500";
 
 type EditProfileFormProps = {
   teacherProfile: TeacherProfile;
@@ -31,7 +31,7 @@ export default function EditProfileForm({
   return (
     <form action={formAction} className="mt-8 space-y-6">
       <div>
-        <label htmlFor="avatar" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="avatar" className="block text-sm font-medium text-stone-700">
           Foto de perfil
         </label>
         <input
@@ -39,12 +39,12 @@ export default function EditProfileForm({
           name="avatar"
           type="file"
           accept="image/*"
-          className="mt-1 block w-full text-sm text-slate-600"
+          className="mt-1 block w-full text-sm text-stone-600"
         />
       </div>
 
       <div>
-        <label htmlFor="bio" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="bio" className="block text-sm font-medium text-stone-700">
           Presentación
         </label>
         <textarea
@@ -58,12 +58,12 @@ export default function EditProfileForm({
       </div>
 
       <fieldset>
-        <legend className="mb-2 text-sm font-medium text-slate-700">Materias</legend>
+        <legend className="mb-2 text-sm font-medium text-stone-700">Materias</legend>
         <div className="flex flex-wrap gap-2">
           {allSubjects.map((subject) => (
             <label
               key={subject.id}
-              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-slate-300 px-3 py-1.5 text-sm has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-700"
+              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-stone-300 px-3 py-1.5 text-sm has-[:checked]:border-teal-600 has-[:checked]:bg-teal-50 has-[:checked]:text-teal-700"
             >
               <input
                 type="checkbox"
@@ -79,14 +79,14 @@ export default function EditProfileForm({
       </fieldset>
 
       <fieldset>
-        <legend className="mb-2 text-sm font-medium text-slate-700">
+        <legend className="mb-2 text-sm font-medium text-stone-700">
           Niveles que impartes
         </legend>
         <div className="flex flex-wrap gap-2">
           {LEVEL_ORDER.map((level) => (
             <label
               key={level}
-              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-slate-300 px-3 py-1.5 text-sm has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-700"
+              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-stone-300 px-3 py-1.5 text-sm has-[:checked]:border-teal-600 has-[:checked]:bg-teal-50 has-[:checked]:text-teal-700"
             >
               <input
                 type="checkbox"
@@ -103,7 +103,7 @@ export default function EditProfileForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="pricePerHour" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="pricePerHour" className="block text-sm font-medium text-stone-700">
             Precio por hora (€)
           </label>
           <input
@@ -119,7 +119,7 @@ export default function EditProfileForm({
         </div>
 
         <div>
-          <label htmlFor="modality" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="modality" className="block text-sm font-medium text-stone-700">
             Modalidad
           </label>
           <select
@@ -137,7 +137,7 @@ export default function EditProfileForm({
         </div>
 
         <div>
-          <label htmlFor="city" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="city" className="block text-sm font-medium text-stone-700">
             Ciudad
           </label>
           <input
@@ -150,7 +150,7 @@ export default function EditProfileForm({
         </div>
 
         <div>
-          <label htmlFor="postalCode" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="postalCode" className="block text-sm font-medium text-stone-700">
             Código postal
           </label>
           <input
@@ -164,7 +164,7 @@ export default function EditProfileForm({
       </div>
 
       <div>
-        <label htmlFor="experienceText" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="experienceText" className="block text-sm font-medium text-stone-700">
           Titulación y experiencia
         </label>
         <textarea
@@ -191,7 +191,7 @@ export default function EditProfileForm({
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+        className="rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
       >
         {isPending ? "Guardando…" : "Guardar cambios"}
       </button>

@@ -29,16 +29,16 @@ export default async function ConversacionPage({
 
   return (
     <main className="mx-auto flex h-[calc(100vh-73px)] max-w-2xl flex-col px-4 py-6">
-      <Link href="/panel/mensajes" className="text-sm text-blue-600 hover:underline">
+      <Link href="/panel/mensajes" className="text-sm text-teal-600 hover:underline">
         ← Volver a mensajes
       </Link>
-      <h1 className="mt-2 text-xl font-bold text-slate-900">
+      <h1 className="mt-2 text-xl font-bold text-stone-900">
         {otherParty.name}
       </h1>
 
-      <div className="mt-4 flex-1 space-y-3 overflow-y-auto rounded-xl border border-slate-200 bg-white p-4">
+      <div className="mt-4 flex-1 space-y-3 overflow-y-auto rounded-xl border border-stone-200 bg-white p-4">
         {conversation.messages.length === 0 && (
-          <p className="text-center text-sm text-slate-400">
+          <p className="text-center text-sm text-stone-400">
             Escribe el primer mensaje para iniciar la conversación.
           </p>
         )}
@@ -52,8 +52,8 @@ export default async function ConversacionPage({
               <div
                 className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
                   isOwn
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-100 text-slate-800"
+                    ? "bg-teal-600 text-white"
+                    : "bg-stone-100 text-stone-800"
                 }`}
               >
                 {message.body}
@@ -71,11 +71,11 @@ export default async function ConversacionPage({
           required
           placeholder="Escribe un mensaje…"
           autoComplete="off"
-          className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
         />
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          className="rounded-lg bg-teal-600 px-5 py-2 text-sm font-semibold text-white hover:bg-teal-700"
         >
           Enviar
         </button>

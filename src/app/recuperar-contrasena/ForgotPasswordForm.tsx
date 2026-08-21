@@ -13,7 +13,7 @@ export default function ForgotPasswordForm() {
 
   if (state.submitted) {
     return (
-      <p className="mt-8 rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-700">
+      <p className="mt-8 rounded-lg bg-teal-50 px-4 py-3 text-sm text-teal-700">
         Si existe una cuenta con ese email, te hemos enviado un enlace para
         restablecer tu contraseña.
       </p>
@@ -23,7 +23,7 @@ export default function ForgotPasswordForm() {
   return (
     <form action={formAction} className="mt-8 space-y-5">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="email" className="block text-sm font-medium text-stone-700">
           Email
         </label>
         <input
@@ -31,7 +31,7 @@ export default function ForgotPasswordForm() {
           name="email"
           type="email"
           required
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
         />
       </div>
 
@@ -44,7 +44,7 @@ export default function ForgotPasswordForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+        className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
       >
         {isPending ? "Enviando…" : "Enviar enlace de recuperación"}
       </button>

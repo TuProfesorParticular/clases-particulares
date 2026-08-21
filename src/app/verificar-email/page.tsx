@@ -40,31 +40,31 @@ export default async function VerificarEmailPage({
     <main className="mx-auto max-w-md px-4 py-16 text-center">
       {success ? (
         <>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-stone-900">
             Email verificado
           </h1>
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 text-stone-600">
             Tu cuenta ha sido verificada correctamente. Ya puedes iniciar
             sesión.
           </p>
           <Link
             href="/iniciar-sesion"
-            className="mt-6 inline-block rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+            className="mt-6 inline-block rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
           >
             Iniciar sesión
           </Link>
         </>
       ) : (
         <>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-stone-900">
             Enlace no válido
           </h1>
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 text-stone-600">
             El enlace de verificación no es válido o ha caducado.
           </p>
           <Link
             href="/"
-            className="mt-6 inline-block rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+            className="mt-6 inline-block rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
           >
             Ir al inicio
           </Link>

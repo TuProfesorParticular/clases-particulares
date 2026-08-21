@@ -16,10 +16,10 @@ export default function TeacherCard({ teacher }: { teacher: TeacherCardData }) {
   return (
     <Link
       href={`/profesores/${teacher.id}`}
-      className="flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      className="flex flex-col rounded-xl border border-stone-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-100 text-lg font-semibold text-slate-500">
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-stone-100 text-lg font-semibold text-stone-500">
           {teacher.user.avatarUrl ? (
             <Image
               src={teacher.user.avatarUrl}
@@ -33,37 +33,37 @@ export default function TeacherCard({ teacher }: { teacher: TeacherCardData }) {
           )}
         </div>
         <div className="min-w-0">
-          <p className="truncate font-semibold text-slate-900">
+          <p className="truncate font-semibold text-stone-900">
             {teacher.user.name}
           </p>
-          <p className="truncate text-sm text-slate-500">
+          <p className="truncate text-sm text-stone-500">
             {teacher.city ?? MODALITY_LABELS[teacher.modality]}
           </p>
         </div>
       </div>
 
       {teacher.bio && (
-        <p className="mt-3 line-clamp-2 text-sm text-slate-600">{teacher.bio}</p>
+        <p className="mt-3 line-clamp-2 text-sm text-stone-600">{teacher.bio}</p>
       )}
 
       <div className="mt-3 flex flex-wrap gap-1.5">
         {subjectNames.slice(0, 3).map((name) => (
           <span
             key={name}
-            className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+            className="rounded-full bg-teal-50 px-2.5 py-1 text-xs font-medium text-teal-700"
           >
             {name}
           </span>
         ))}
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-        <span className="text-sm text-slate-500">
+      <div className="mt-4 flex items-center justify-between border-t border-stone-100 pt-3">
+        <span className="text-sm text-stone-500">
           {MODALITY_LABELS[teacher.modality]}
         </span>
-        <span className="text-lg font-bold text-slate-900">
+        <span className="text-lg font-bold text-stone-900">
           {Number(teacher.pricePerHour)}€
-          <span className="text-sm font-normal text-slate-400">/h</span>
+          <span className="text-sm font-normal text-stone-400">/h</span>
         </span>
       </div>
     </Link>

@@ -24,15 +24,15 @@ export default async function AdminPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10">
-      <h1 className="text-2xl font-bold text-slate-900">Administración</h1>
+      <h1 className="text-2xl font-bold text-stone-900">Administración</h1>
 
       <section className="mt-8">
-        <h2 className="text-lg font-semibold text-slate-900">
+        <h2 className="text-lg font-semibold text-stone-900">
           Anuncios pendientes de aprobación ({pendingProfiles.length})
         </h2>
 
         {pendingProfiles.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">
+          <p className="mt-4 text-sm text-stone-500">
             No hay anuncios pendientes.
           </p>
         ) : (
@@ -40,16 +40,16 @@ export default async function AdminPage() {
             {pendingProfiles.map((profile) => (
               <li
                 key={profile.id}
-                className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4"
+                className="flex items-center justify-between gap-4 rounded-xl border border-stone-200 bg-white p-4"
               >
                 <div className="min-w-0">
-                  <p className="font-medium text-slate-900">
+                  <p className="font-medium text-stone-900">
                     {profile.user.name}{" "}
-                    <span className="font-normal text-slate-400">
+                    <span className="font-normal text-stone-400">
                       · {profile.user.email}
                     </span>
                   </p>
-                  <p className="truncate text-sm text-slate-500">
+                  <p className="truncate text-sm text-stone-500">
                     {profile.bio || "(sin presentación todavía)"}
                   </p>
                 </div>
@@ -82,10 +82,10 @@ export default async function AdminPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-lg font-semibold text-slate-900">Usuarios</h2>
-        <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <h2 className="text-lg font-semibold text-stone-900">Usuarios</h2>
+        <div className="mt-4 overflow-x-auto rounded-xl border border-stone-200 bg-white">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-slate-100 text-slate-500">
+            <thead className="border-b border-stone-100 text-stone-500">
               <tr>
                 <th className="px-4 py-2 font-medium">Nombre</th>
                 <th className="px-4 py-2 font-medium">Email</th>
@@ -94,12 +94,12 @@ export default async function AdminPage() {
                 <th className="px-4 py-2" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-stone-100">
               {users.map((user) => (
                 <tr key={user.id}>
                   <td className="px-4 py-2">{user.name}</td>
-                  <td className="px-4 py-2 text-slate-500">{user.email}</td>
-                  <td className="px-4 py-2 text-slate-500">{user.role}</td>
+                  <td className="px-4 py-2 text-stone-500">{user.email}</td>
+                  <td className="px-4 py-2 text-stone-500">{user.role}</td>
                   <td className="px-4 py-2">
                     <span
                       className={
@@ -117,7 +117,7 @@ export default async function AdminPage() {
                         <input type="hidden" name="userId" value={user.id} />
                         <button
                           type="submit"
-                          className="text-xs font-medium text-blue-600 hover:underline"
+                          className="text-xs font-medium text-teal-600 hover:underline"
                         >
                           {user.status === "active" ? "Suspender" : "Reactivar"}
                         </button>

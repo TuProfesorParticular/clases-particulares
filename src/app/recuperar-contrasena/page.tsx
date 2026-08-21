@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 export default function RecuperarContrasenaPage() {
   return (
     <main className="mx-auto max-w-md px-4 py-12">
-      <h1 className="text-2xl font-bold text-slate-900">
+      <h1 className="text-2xl font-bold text-stone-900">
         Recuperar contraseña
       </h1>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-stone-500">
         Introduce tu email y te enviaremos un enlace para elegir una nueva
         contraseña.
       </p>

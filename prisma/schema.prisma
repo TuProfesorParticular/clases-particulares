@@ -40,6 +40,20 @@ enum UserStatus {
   suspended
 }
 
+// Niveles de suscripción del profesor (visibilidad del anuncio)
+enum TeacherPlan {
+  free
+  pro
+  premium
+}
+
+enum BookingStatus {
+  pending
+  paid
+  canceled
+  refunded
+}
+
 model User {
   id            String     @id @default(cuid())
   email         String     @unique
@@ -60,6 +74,7 @@ model User {
   sentMessages          Message[]      @relation("MessageSender")
   studentConversations  Conversation[] @relation("StudentConversations")
   teacherConversations  Conversation[] @relation("TeacherConversations")
+  bookings              Booking[]
 
   @@map("users")
 }
@@ -77,13 +92,43 @@ model TeacherProfile {
   status         TeacherStatus @default(pending)
   createdAt      DateTime      @default(now())
 
+  // Suscripción (plan de visibilidad) — Stripe Billing
+  plan                 TeacherPlan @default(free)
+  stripeCustomerId     String?     @unique
+  stripeSubscriptionId String?     @unique
+  subscriptionStatus   String?
+
+  // Cobro de la primera clase — Stripe Connect (cuenta del profesor)
+  stripeConnectAccountId String?  @unique
+  stripeConnectOnboarded Boolean  @default(false)
+
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   subjects  TeacherSubject[]
   materials Material[]
+  bookings  Booking[]
 
   @@index([status])
   @@index([city])
   @@map("teacher_profiles")
+}
+
+// Reserva de la primera clase pagada a través de la plataforma (comisión del 20%)
+model Booking {
+  id                     String        @id @default(cuid())
+  studentId              String
+  teacherProfileId       String
+  amount                 Decimal       @db.Decimal(10, 2)
+  platformFeeAmount      Decimal       @db.Decimal(10, 2)
+  status                 BookingStatus @default(pending)
+  stripeCheckoutSessionId String?      @unique
+  stripePaymentIntentId  String?       @unique
+  createdAt              DateTime      @default(now())
+
+  student        User           @relation(fields: [studentId], references: [id])
+  teacherProfile TeacherProfile @relation(fields: [teacherProfileId], references: [id])
+
+  @@unique([studentId, teacherProfileId])
+  @@map("bookings")
 }
 
 // Categorías de nivel superior que estructuran la web: Ciencias, Humanidades,

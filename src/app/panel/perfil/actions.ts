@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth-helpers";
 import { uploadAvatar } from "@/lib/storage";
+import { getPlan } from "@/lib/plans";
 
 const schema = z.object({
   bio: z.string().max(1000).optional(),
@@ -50,6 +51,13 @@ export async function updateTeacherProfile(
   const teacherProfile = await prisma.teacherProfile.findUniqueOrThrow({
     where: { userId: session.user.id },
   });
+
+  const maxSubjects = getPlan(teacherProfile.plan).maxSubjects;
+  if (maxSubjects !== null && subjectIds.length > maxSubjects) {
+    return {
+      error: `Tu plan actual (${getPlan(teacherProfile.plan).name}) permite hasta ${maxSubjects} materia${maxSubjects === 1 ? "" : "s"}. Mejora tu plan en "Mi suscripción" para añadir más.`,
+    };
+  }
 
   const avatarFile = formData.get("avatar");
   let avatarUrl: string | undefined;

@@ -32,10 +32,17 @@ export default function TeacherCard({ teacher }: { teacher: TeacherCardData }) {
             teacher.user.name.charAt(0).toUpperCase()
           )}
         </div>
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-stone-900">
-            {teacher.user.name}
-          </p>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <p className="truncate font-semibold text-stone-900">
+              {teacher.user.name}
+            </p>
+            {teacher.plan !== "free" && (
+              <span className="flex-shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+                Destacado
+              </span>
+            )}
+          </div>
           <p className="truncate text-sm text-stone-500">
             {teacher.city ?? MODALITY_LABELS[teacher.modality]}
           </p>

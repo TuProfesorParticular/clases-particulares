@@ -4,6 +4,7 @@ import { getAllSubjects, getTeacherSearchResults } from "@/lib/teachers";
 import { CATEGORIES, MATERIALS_CATEGORY } from "@/lib/constants";
 import SearchFilters from "@/components/SearchFilters";
 import TeacherCard from "@/components/TeacherCard";
+import PricingSection from "@/components/PricingSection";
 
 type SearchParams = {
   materia?: string;
@@ -105,6 +106,8 @@ export default async function HomePage({
           </p>
         )}
       </section>
+
+      <PricingSection />
     </main>
   );
 }

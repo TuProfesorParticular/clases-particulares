@@ -3,11 +3,15 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTeacherProfileById } from "@/lib/teachers";
 import { LEVEL_LABELS, MODALITY_LABELS } from "@/lib/constants";
+import { PLATFORM_FEE_PERCENT } from "@/lib/plans";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { startConversation } from "@/app/panel/mensajes/actions";
+import { bookFirstClass } from "./booking-actions";
 
 type PageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ reserva?: string }>;
 };
 
 export async function generateMetadata({
@@ -23,8 +27,24 @@ export async function generateMetadata({
   };
 }
 
-export default async function TeacherProfilePage({ params }: PageProps) {
+const RESERVA_MESSAGES: Record<string, { text: string; tone: string }> = {
+  exito: {
+    text: "¡Reserva pagada! El profesor recibirá tu contacto para acordar el horario.",
+    tone: "bg-emerald-50 text-emerald-700",
+  },
+  cancelada: {
+    text: "Has cancelado el pago. Puedes intentarlo de nuevo cuando quieras.",
+    tone: "bg-amber-50 text-amber-700",
+  },
+  "ya-existe": {
+    text: "Ya tienes una primera clase reservada y pagada con este profesor.",
+    tone: "bg-teal-50 text-teal-700",
+  },
+};
+
+export default async function TeacherProfilePage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { reserva } = await searchParams;
   const [teacher, session] = await Promise.all([
     getTeacherProfileById(id),
     auth(),
@@ -36,6 +56,18 @@ export default async function TeacherProfilePage({ params }: PageProps) {
 
   const isOwnProfile = session?.user?.id === teacher.userId;
 
+  const existingBooking =
+    session?.user && !isOwnProfile
+      ? await prisma.booking.findUnique({
+          where: {
+            studentId_teacherProfileId: {
+              studentId: session.user.id,
+              teacherProfileId: teacher.id,
+            },
+          },
+        })
+      : null;
+
   const levelsBySubject = new Map<string, string[]>();
   for (const teacherSubject of teacher.subjects) {
     const levels = levelsBySubject.get(teacherSubject.subject.name) ?? [];
@@ -43,11 +75,21 @@ export default async function TeacherProfilePage({ params }: PageProps) {
     levelsBySubject.set(teacherSubject.subject.name, levels);
   }
 
+  const reservaMessage = reserva ? RESERVA_MESSAGES[reserva] : undefined;
+  const canAcceptBookings = teacher.stripeConnectOnboarded;
+  const alreadyBooked = existingBooking?.status === "paid";
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <Link href="/" className="text-sm text-teal-600 hover:underline">
         ← Volver a la búsqueda
       </Link>
+
+      {reservaMessage && (
+        <p className={`mt-4 rounded-lg px-4 py-3 text-sm ${reservaMessage.tone}`}>
+          {reservaMessage.text}
+        </p>
+      )}
 
       <div className="mt-4 flex flex-col gap-6 rounded-xl border border-stone-200 bg-white p-6 shadow-sm sm:flex-row sm:items-start">
         <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-full bg-stone-100 text-2xl font-semibold text-stone-500">
@@ -103,15 +145,41 @@ export default async function TeacherProfilePage({ params }: PageProps) {
                 Este es tu propio anuncio.
               </p>
             ) : (
-              <form action={startConversation} className="w-full sm:w-auto">
-                <input type="hidden" name="teacherProfileId" value={teacher.id} />
-                <button
-                  type="submit"
-                  className="w-full rounded-lg bg-teal-600 px-5 py-2.5 text-center text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
-                >
-                  Contactar
-                </button>
-              </form>
+              <>
+                <form action={startConversation} className="w-full sm:w-auto">
+                  <input type="hidden" name="teacherProfileId" value={teacher.id} />
+                  <button
+                    type="submit"
+                    className="w-full rounded-lg bg-teal-600 px-5 py-2.5 text-center text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
+                  >
+                    Contactar
+                  </button>
+                </form>
+
+                {canAcceptBookings && (
+                  <>
+                    {alreadyBooked ? (
+                      <span className="rounded-lg bg-emerald-50 px-4 py-2 text-center text-xs font-medium text-emerald-700 sm:w-auto">
+                        Primera clase ya reservada
+                      </span>
+                    ) : (
+                      <form action={bookFirstClass} className="w-full sm:w-auto">
+                        <input type="hidden" name="teacherProfileId" value={teacher.id} />
+                        <button
+                          type="submit"
+                          className="w-full rounded-lg border border-teal-600 px-5 py-2.5 text-center text-sm font-semibold text-teal-700 hover:bg-teal-50 sm:w-auto"
+                        >
+                          Reservar primera clase
+                        </button>
+                        <p className="mt-1 text-center text-[11px] text-stone-400 sm:text-right">
+                          Pago seguro con Stripe. La plataforma retiene un{" "}
+                          {PLATFORM_FEE_PERCENT}% de gestión.
+                        </p>
+                      </form>
+                    )}
+                  </>
+                )}
+              </>
             )
           ) : (
             <>

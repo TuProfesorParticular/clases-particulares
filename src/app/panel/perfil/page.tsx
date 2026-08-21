@@ -50,12 +50,18 @@ export default async function EditarPerfilPage() {
         </span>
       </div>
 
-      <div className="mt-2 flex gap-4 text-sm">
+      <div className="mt-2 flex flex-wrap gap-4 text-sm">
         <Link href="/panel/mensajes" className="text-teal-600 hover:underline">
           Mensajes
         </Link>
         <Link href="/panel/materiales" className="text-teal-600 hover:underline">
           Mis materiales
+        </Link>
+        <Link href="/panel/suscripcion" className="text-teal-600 hover:underline">
+          Mi suscripción
+        </Link>
+        <Link href="/panel/pagos" className="text-teal-600 hover:underline">
+          Cobros
         </Link>
       </div>
       <p className="mt-1 text-sm text-stone-500">

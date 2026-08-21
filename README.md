@@ -1,4 +1,4 @@
-# Plataforma de Clases Particulares — MVP
+# TuProfesorParticular — MVP
 
 Base del proyecto descrito en [`MVP-plataforma-clases-particulares.md`](./MVP-plataforma-clases-particulares.md).
 
@@ -89,11 +89,11 @@ entorno (ver `.env.example`) — sin ellas, la subida falla con un error explíc
 
 ## Producción
 
-- **URL en vivo**: https://clases-particulares-three.vercel.app
-- **Hosting**: Vercel, proyecto `tu-profesor-particular/clases-particulares`
-- **Base de datos**: Supabase (Postgres), proyecto `clases-particulares`
+- **URL en vivo**: https://tuprofesorparticular.vercel.app
+- **Hosting**: Vercel, proyecto `tu-profesor-particular/tuprofesorparticular`
+- **Base de datos**: Supabase (Postgres), proyecto `clases-particulares` (nombre interno en Supabase, sin efecto visible)
 - **Emails**: Resend, remitente `onboarding@resend.dev` (dominio de pruebas — ver más abajo)
-- **Repositorio**: https://github.com/TuProfesorParticular/clases-particulares
+- **Repositorio**: https://github.com/TuProfesorParticular/tuprofesorparticular
 
 Variables de entorno configuradas en Vercel (Production): `DATABASE_URL`, `DIRECT_URL`,
 `AUTH_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `APP_URL`, `SUPABASE_URL`,

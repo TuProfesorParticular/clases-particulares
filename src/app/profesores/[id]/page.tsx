@@ -24,7 +24,7 @@ export async function generateMetadata({
 
   return {
     title: teacher
-      ? `${teacher.user.name} · ClasesParticulares`
+      ? `${teacher.user.name} · TuProfesorParticular`
       : "Profesor no encontrado",
   };
 }

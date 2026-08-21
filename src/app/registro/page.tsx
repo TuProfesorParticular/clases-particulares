@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import RegisterForm from "./RegisterForm";
 
 export const metadata: Metadata = {
-  title: "Crear cuenta · ClasesParticulares",
+  title: "Crear cuenta · TuProfesorParticular",
 };
 
 export default function RegistroPage() {

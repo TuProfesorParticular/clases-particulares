@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ResetPasswordForm from "./ResetPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Restablecer contraseña · ClasesParticulares",
+  title: "Restablecer contraseña · TuProfesorParticular",
 };
 
 export default async function RestablecerContrasenaPage({

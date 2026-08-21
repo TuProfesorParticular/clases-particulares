@@ -6,7 +6,7 @@ import { PLATFORM_FEE_PERCENT } from "@/lib/plans";
 import { startConnectOnboarding } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Cobros · ClasesParticulares",
+  title: "Cobros · TuProfesorParticular",
 };
 
 export default async function PagosPage({

@@ -7,7 +7,7 @@ import UploadMaterialForm from "./UploadMaterialForm";
 import { deleteMaterial } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Mis materiales · ClasesParticulares",
+  title: "Mis materiales · TuProfesorParticular",
 };
 
 export default async function MisMaterialesPage() {

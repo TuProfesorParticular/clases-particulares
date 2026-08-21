@@ -6,7 +6,7 @@ import { getConversationForUser } from "@/lib/messages";
 import { sendMessage } from "../actions";
 
 export const metadata: Metadata = {
-  title: "Conversación · ClasesParticulares",
+  title: "Conversación · TuProfesorParticular",
 };
 
 export default async function ConversacionPage({

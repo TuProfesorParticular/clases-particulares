@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import EthicsReportForm from "./EthicsReportForm";
 
 export const metadata: Metadata = {
-  title: "Canal ético · ClasesParticulares",
+  title: "Canal ético · TuProfesorParticular",
 };
 
 export default async function CanalEticoPage({

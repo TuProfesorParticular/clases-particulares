@@ -9,7 +9,7 @@ import {
 } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Administración · ClasesParticulares",
+  title: "Administración · TuProfesorParticular",
 };
 
 const REPORT_STATUS_LABELS = {

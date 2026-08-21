@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ClasesParticulares — Encuentra tu profesor ideal",
+  title: "TuProfesorParticular — Encuentra tu profesor ideal",
   description:
     "Conecta con profesores particulares por materia, ubicación y modalidad.",
 };

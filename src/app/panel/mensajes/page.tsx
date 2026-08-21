@@ -4,7 +4,7 @@ import { requireSession } from "@/lib/auth-helpers";
 import { getConversationsForUser } from "@/lib/messages";
 
 export const metadata: Metadata = {
-  title: "Mensajes · ClasesParticulares",
+  title: "Mensajes · TuProfesorParticular",
 };
 
 export default async function MensajesPage() {

@@ -6,7 +6,7 @@ import { getAllSubjects } from "@/lib/teachers";
 import EditProfileForm from "./EditProfileForm";
 
 export const metadata: Metadata = {
-  title: "Mi anuncio · ClasesParticulares",
+  title: "Mi anuncio · TuProfesorParticular",
 };
 
 const STATUS_LABELS = {

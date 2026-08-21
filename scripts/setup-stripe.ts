@@ -16,7 +16,7 @@ async function ensurePrice(stripe: Stripe, planId: "pro" | "premium") {
   }
 
   const product = await stripe.products.create({
-    name: `ClasesParticulares — Plan ${plan.name}`,
+    name: `TuProfesorParticular — Plan ${plan.name}`,
     description: plan.description,
   });
 

@@ -4,7 +4,7 @@ import { CATEGORIES, MATERIALS_CATEGORY } from "@/lib/constants";
 import { getMaterialsByCategory } from "@/lib/materials";
 
 export const metadata: Metadata = {
-  title: "Materiales · ClasesParticulares",
+  title: "Materiales · TuProfesorParticular",
 };
 
 type SearchParams = { categoria?: string };

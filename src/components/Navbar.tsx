@@ -9,7 +9,7 @@ export default async function Navbar() {
     <header className="border-b border-stone-200 bg-white">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link href="/" className="text-lg font-bold text-stone-900">
-          Clases<span className="text-teal-600">Particulares</span>
+          Tu<span className="text-teal-600">Profesor</span>Particular
         </Link>
         <div className="flex items-center gap-4 text-sm font-medium">
           <Link href="/" className="text-stone-600 hover:text-stone-900">

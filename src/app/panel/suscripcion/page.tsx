@@ -5,7 +5,7 @@ import { PLANS, getPlan } from "@/lib/plans";
 import { startSubscriptionCheckout, openBillingPortal } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Mi suscripción · ClasesParticulares",
+  title: "Mi suscripción · TuProfesorParticular",
 };
 
 export default async function SuscripcionPage() {

@@ -3,7 +3,7 @@ import Link from "next/link";
 import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
-  title: "Iniciar sesión · ClasesParticulares",
+  title: "Iniciar sesión · TuProfesorParticular",
 };
 
 export default function LoginPage() {

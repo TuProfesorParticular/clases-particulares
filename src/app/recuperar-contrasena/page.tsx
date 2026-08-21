@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ForgotPasswordForm from "./ForgotPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Recuperar contraseña · ClasesParticulares",
+  title: "Recuperar contraseña · TuProfesorParticular",
 };
 
 export default function RecuperarContrasenaPage() {

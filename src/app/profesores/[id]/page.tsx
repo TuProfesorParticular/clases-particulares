@@ -8,6 +8,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { startConversation } from "@/app/panel/mensajes/actions";
 import { bookFirstClass } from "./booking-actions";
+import { getReviewsForTeacher } from "@/lib/reviews";
+import ReviewForm from "./ReviewForm";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -56,9 +58,9 @@ export default async function TeacherProfilePage({ params, searchParams }: PageP
 
   const isOwnProfile = session?.user?.id === teacher.userId;
 
-  const existingBooking =
+  const [existingBooking, { reviews, average, count }] = await Promise.all([
     session?.user && !isOwnProfile
-      ? await prisma.booking.findUnique({
+      ? prisma.booking.findUnique({
           where: {
             studentId_teacherProfileId: {
               studentId: session.user.id,
@@ -66,7 +68,15 @@ export default async function TeacherProfilePage({ params, searchParams }: PageP
             },
           },
         })
-      : null;
+      : Promise.resolve(null),
+    getReviewsForTeacher(teacher.id),
+  ]);
+
+  const myReview =
+    session?.user && !isOwnProfile
+      ? reviews.find((r) => r.studentId === session.user.id)
+      : undefined;
+  const canReview = existingBooking?.status === "paid";
 
   const levelsBySubject = new Map<string, string[]>();
   for (const teacherSubject of teacher.subjects) {
@@ -104,6 +114,15 @@ export default async function TeacherProfilePage({ params, searchParams }: PageP
             {teacher.city ? `${teacher.city} · ` : ""}
             {MODALITY_LABELS[teacher.modality]}
           </p>
+          {average !== null && (
+            <p className="mt-1 flex items-center gap-1 text-sm text-stone-600">
+              <span className="text-amber-400">★</span>
+              <span className="font-medium">{average.toFixed(1)}</span>
+              <span className="text-stone-400">
+                ({count} {count === 1 ? "valoración" : "valoraciones"})
+              </span>
+            </p>
+          )}
 
           <p className="mt-4 text-stone-700">
             {teacher.bio || "Este profesor todavía no ha añadido una presentación."}
@@ -196,6 +215,61 @@ export default async function TeacherProfilePage({ params, searchParams }: PageP
           )}
         </div>
       </div>
+
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold text-stone-900">
+          Valoraciones {count > 0 && `(${count})`}
+        </h2>
+
+        {canReview && !isOwnProfile && (
+          <div className="mt-4">
+            <ReviewForm
+              teacherProfileId={teacher.id}
+              existingRating={myReview?.rating}
+              existingComment={myReview?.comment}
+            />
+          </div>
+        )}
+
+        <ul className="mt-4 space-y-3">
+          {reviews.map((review) => (
+            <li
+              key={review.id}
+              className="rounded-xl border border-stone-200 bg-white p-4"
+            >
+              <div className="flex items-center justify-between">
+                <p className="font-medium text-stone-900">{review.student.name}</p>
+                <span className="text-amber-400">
+                  {"★".repeat(review.rating)}
+                  <span className="text-stone-200">
+                    {"★".repeat(5 - review.rating)}
+                  </span>
+                </span>
+              </div>
+              {review.comment && (
+                <p className="mt-1 text-sm text-stone-600">{review.comment}</p>
+              )}
+            </li>
+          ))}
+          {reviews.length === 0 && (
+            <p className="rounded-lg border border-dashed border-stone-300 p-6 text-center text-sm text-stone-400">
+              Este profesor todavía no tiene valoraciones.
+            </p>
+          )}
+        </ul>
+      </section>
+
+      {session?.user && !isOwnProfile && (
+        <p className="mt-6 text-center text-xs text-stone-400">
+          ¿Algún problema con este profesor?{" "}
+          <Link
+            href={`/canal-etico?profesor=${teacher.id}`}
+            className="text-stone-500 underline hover:text-stone-700"
+          >
+            Repórtalo de forma confidencial
+          </Link>
+        </p>
+      )}
     </main>
   );
 }

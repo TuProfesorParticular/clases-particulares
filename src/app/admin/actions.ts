@@ -35,3 +35,19 @@ export async function toggleUserStatus(formData: FormData) {
 
   revalidatePath("/admin");
 }
+
+export async function setEthicsReportStatus(formData: FormData) {
+  await requireRole("admin");
+
+  const reportId = String(formData.get("reportId"));
+  const status = String(formData.get("status"));
+
+  if (status !== "reviewed" && status !== "closed" && status !== "open") return;
+
+  await prisma.ethicsReport.update({
+    where: { id: reportId },
+    data: { status },
+  });
+
+  revalidatePath("/admin");
+}

@@ -1,16 +1,33 @@
 import type { Metadata } from "next";
 import { requireRole } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
-import { setTeacherProfileStatus, toggleUserStatus } from "./actions";
+import { getEthicsReports } from "@/lib/ethics";
+import {
+  setTeacherProfileStatus,
+  toggleUserStatus,
+  setEthicsReportStatus,
+} from "./actions";
 
 export const metadata: Metadata = {
   title: "Administración · ClasesParticulares",
 };
 
+const REPORT_STATUS_LABELS = {
+  open: "Abierto",
+  reviewed: "Revisado",
+  closed: "Cerrado",
+};
+
+const REPORT_STATUS_STYLES = {
+  open: "bg-red-50 text-red-700",
+  reviewed: "bg-amber-50 text-amber-700",
+  closed: "bg-stone-100 text-stone-500",
+};
+
 export default async function AdminPage() {
   const session = await requireRole("admin");
 
-  const [pendingProfiles, users] = await Promise.all([
+  const [pendingProfiles, users, ethicsReports] = await Promise.all([
     prisma.teacherProfile.findMany({
       where: { status: "pending" },
       include: { user: { select: { name: true, email: true } } },
@@ -20,6 +37,7 @@ export default async function AdminPage() {
       orderBy: { createdAt: "desc" },
       take: 50,
     }),
+    getEthicsReports(),
   ]);
 
   return (
@@ -75,6 +93,79 @@ export default async function AdminPage() {
                     </button>
                   </form>
                 </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-lg font-semibold text-stone-900">
+          Canal ético — reportes ({ethicsReports.filter((r) => r.status === "open").length} abiertos)
+        </h2>
+
+        {ethicsReports.length === 0 ? (
+          <p className="mt-4 text-sm text-stone-500">No hay reportes todavía.</p>
+        ) : (
+          <ul className="mt-4 space-y-3">
+            {ethicsReports.map((report) => (
+              <li
+                key={report.id}
+                className="rounded-xl border border-stone-200 bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-sm text-stone-500">
+                      De {report.reporter.name} ({report.reporter.email})
+                      {report.teacherProfile && (
+                        <>
+                          {" "}
+                          sobre{" "}
+                          <span className="font-medium text-stone-700">
+                            {report.teacherProfile.user.name}
+                          </span>
+                        </>
+                      )}
+                      {" · "}
+                      {report.createdAt.toLocaleDateString("es-ES")}
+                    </p>
+                    <p className="mt-2 whitespace-pre-wrap text-sm text-stone-800">
+                      {report.message}
+                    </p>
+                  </div>
+                  <span
+                    className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-medium ${REPORT_STATUS_STYLES[report.status]}`}
+                  >
+                    {REPORT_STATUS_LABELS[report.status]}
+                  </span>
+                </div>
+
+                {report.status !== "closed" && (
+                  <div className="mt-3 flex gap-2">
+                    {report.status === "open" && (
+                      <form action={setEthicsReportStatus}>
+                        <input type="hidden" name="reportId" value={report.id} />
+                        <input type="hidden" name="status" value="reviewed" />
+                        <button
+                          type="submit"
+                          className="rounded-lg border border-amber-300 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-50"
+                        >
+                          Marcar como revisado
+                        </button>
+                      </form>
+                    )}
+                    <form action={setEthicsReportStatus}>
+                      <input type="hidden" name="reportId" value={report.id} />
+                      <input type="hidden" name="status" value="closed" />
+                      <button
+                        type="submit"
+                        className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 hover:bg-stone-50"
+                      >
+                        Cerrar
+                      </button>
+                    </form>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

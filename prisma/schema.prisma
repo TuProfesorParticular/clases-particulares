@@ -54,6 +54,12 @@ enum BookingStatus {
   refunded
 }
 
+enum EthicsReportStatus {
+  open
+  reviewed
+  closed
+}
+
 model User {
   id            String     @id @default(cuid())
   email         String     @unique
@@ -71,10 +77,12 @@ model User {
 
   teacherProfile TeacherProfile?
 
-  sentMessages          Message[]      @relation("MessageSender")
-  studentConversations  Conversation[] @relation("StudentConversations")
-  teacherConversations  Conversation[] @relation("TeacherConversations")
-  bookings              Booking[]
+  sentMessages         Message[]      @relation("MessageSender")
+  studentConversations Conversation[] @relation("StudentConversations")
+  teacherConversations Conversation[] @relation("TeacherConversations")
+  bookings             Booking[]
+  reviews              Review[]
+  ethicsReports        EthicsReport[] @relation("EthicsReporter")
 
   @@map("users")
 }
@@ -99,30 +107,64 @@ model TeacherProfile {
   subscriptionStatus   String?
 
   // Cobro de la primera clase — Stripe Connect (cuenta del profesor)
-  stripeConnectAccountId String?  @unique
-  stripeConnectOnboarded Boolean  @default(false)
+  stripeConnectAccountId String? @unique
+  stripeConnectOnboarded Boolean @default(false)
 
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subjects  TeacherSubject[]
-  materials Material[]
-  bookings  Booking[]
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjects      TeacherSubject[]
+  materials     Material[]
+  bookings      Booking[]
+  reviews       Review[]
+  ethicsReports EthicsReport[]
 
   @@index([status])
   @@index([city])
   @@map("teacher_profiles")
 }
 
+// Valoración pública de un alumno sobre un profesor (solo tras una clase reservada y pagada)
+model Review {
+  id               String   @id @default(cuid())
+  studentId        String
+  teacherProfileId String
+  rating           Int
+  comment          String?
+  createdAt        DateTime @default(now())
+
+  student        User           @relation(fields: [studentId], references: [id])
+  teacherProfile TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, teacherProfileId])
+  @@index([teacherProfileId])
+  @@map("reviews")
+}
+
+// Canal ético: reportes privados de alumnos sobre la conducta de un profesor, solo visibles para el admin
+model EthicsReport {
+  id               String             @id @default(cuid())
+  reporterId       String
+  teacherProfileId String?
+  message          String
+  status           EthicsReportStatus @default(open)
+  createdAt        DateTime           @default(now())
+
+  reporter       User            @relation("EthicsReporter", fields: [reporterId], references: [id])
+  teacherProfile TeacherProfile? @relation(fields: [teacherProfileId], references: [id], onDelete: SetNull)
+
+  @@map("ethics_reports")
+}
+
 // Reserva de la primera clase pagada a través de la plataforma (comisión del 20%)
 model Booking {
-  id                     String        @id @default(cuid())
-  studentId              String
-  teacherProfileId       String
-  amount                 Decimal       @db.Decimal(10, 2)
-  platformFeeAmount      Decimal       @db.Decimal(10, 2)
-  status                 BookingStatus @default(pending)
-  stripeCheckoutSessionId String?      @unique
-  stripePaymentIntentId  String?       @unique
-  createdAt              DateTime      @default(now())
+  id                      String        @id @default(cuid())
+  studentId               String
+  teacherProfileId        String
+  amount                  Decimal       @db.Decimal(10, 2)
+  platformFeeAmount       Decimal       @db.Decimal(10, 2)
+  status                  BookingStatus @default(pending)
+  stripeCheckoutSessionId String?       @unique
+  stripePaymentIntentId   String?       @unique
+  createdAt               DateTime      @default(now())
 
   student        User           @relation(fields: [studentId], references: [id])
   teacherProfile TeacherProfile @relation(fields: [teacherProfileId], references: [id])

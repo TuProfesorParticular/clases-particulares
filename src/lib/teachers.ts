@@ -38,6 +38,7 @@ export function getTeacherSearchResults(filters: TeacherSearchFilters) {
     include: {
       user: { select: { name: true, avatarUrl: true } },
       subjects: { include: { subject: true } },
+      reviews: { select: { rating: true } },
     },
     // El enum TeacherPlan se declara free < pro < premium, así que ordenar
     // "desc" por plan pone primero a los profesores con suscripción de pago.

@@ -7,11 +7,16 @@ export type TeacherCardData = Prisma.TeacherProfileGetPayload<{
   include: {
     user: { select: { name: true; avatarUrl: true } };
     subjects: { include: { subject: true } };
+    reviews: { select: { rating: true } };
   };
 }>;
 
 export default function TeacherCard({ teacher }: { teacher: TeacherCardData }) {
   const subjectNames = [...new Set(teacher.subjects.map((s) => s.subject.name))];
+  const averageRating =
+    teacher.reviews.length > 0
+      ? teacher.reviews.reduce((sum, r) => sum + r.rating, 0) / teacher.reviews.length
+      : null;
 
   return (
     <Link
@@ -46,6 +51,13 @@ export default function TeacherCard({ teacher }: { teacher: TeacherCardData }) {
           <p className="truncate text-sm text-stone-500">
             {teacher.city ?? MODALITY_LABELS[teacher.modality]}
           </p>
+          {averageRating !== null && (
+            <p className="flex items-center gap-1 text-xs text-stone-500">
+              <span className="text-amber-400">★</span>
+              {averageRating.toFixed(1)}
+              <span className="text-stone-400">({teacher.reviews.length})</span>
+            </p>
+          )}
         </div>
       </div>
 

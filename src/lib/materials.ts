@@ -57,3 +57,17 @@ export function getMaterialsForTeacher(teacherProfileId: string) {
     orderBy: { createdAt: "desc" },
   });
 }
+
+// Materiales subidos por el profesor en lo que va del mes natural actual —
+// base del descuento en los planes Pro/Premium.
+export function getMonthlyMaterialCount(teacherProfileId: string) {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  return prisma.material.count({
+    where: {
+      teacherProfileId,
+      createdAt: { gte: startOfMonth },
+    },
+  });
+}

@@ -10,8 +10,3 @@ export function requireStripe(): Stripe {
   }
   return stripe;
 }
-
-export const PRICE_IDS = {
-  pro: process.env.STRIPE_PRICE_PRO,
-  premium: process.env.STRIPE_PRICE_PREMIUM,
-};

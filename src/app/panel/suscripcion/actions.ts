@@ -3,19 +3,16 @@
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
-import { requireStripe, PRICE_IDS } from "@/lib/stripe";
+import { requireStripe } from "@/lib/stripe";
+import { getPlan, getDiscountedPrice } from "@/lib/plans";
+import { getMonthlyMaterialCount } from "@/lib/materials";
 
 const APP_URL = process.env.APP_URL || "http://localhost:3000";
 
 export async function startSubscriptionCheckout(formData: FormData) {
   const session = await requireRole("teacher");
-  const plan = String(formData.get("plan") || "");
-  if (plan !== "pro" && plan !== "premium") return;
-
-  const priceId = PRICE_IDS[plan];
-  if (!priceId) {
-    throw new Error(`Falta configurar el Price ID de Stripe para el plan ${plan}`);
-  }
+  const planId = String(formData.get("plan") || "");
+  if (planId !== "pro" && planId !== "premium") return;
 
   const stripe = requireStripe();
 
@@ -38,13 +35,34 @@ export async function startSubscriptionCheckout(formData: FormData) {
     });
   }
 
+  const plan = getPlan(planId);
+  const materialsThisMonth = await getMonthlyMaterialCount(teacherProfile.id);
+  const price = getDiscountedPrice(plan.price, materialsThisMonth);
+
   const checkoutSession = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
-    line_items: [{ price: priceId, quantity: 1 }],
+    line_items: [
+      {
+        price_data: {
+          currency: "eur",
+          unit_amount: Math.round(price * 100),
+          recurring: { interval: "month" },
+          product_data: {
+            name: `TuProfesorParticular — Plan ${plan.name}`,
+            ...(materialsThisMonth > 0
+              ? {
+                  description: `Incluye tu descuento por ${materialsThisMonth} material(es) compartido(s) este mes`,
+                }
+              : {}),
+          },
+        },
+        quantity: 1,
+      },
+    ],
     success_url: `${APP_URL}/panel/suscripcion?success=1`,
     cancel_url: `${APP_URL}/panel/suscripcion?canceled=1`,
-    metadata: { teacherProfileId: teacherProfile.id, plan },
+    metadata: { teacherProfileId: teacherProfile.id, plan: planId },
   });
 
   if (!checkoutSession.url) {

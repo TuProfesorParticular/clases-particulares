@@ -64,6 +64,15 @@ export function getPlan(id: TeacherPlan): PlanDetails {
   return PLANS.find((p) => p.id === id) ?? PLANS[0];
 }
 
+// Descuento por compartir materiales: cada material subido ese mes rebaja
+// 3€ los planes de pago (Pro y Premium), sin bajar de 0€.
+export const MATERIAL_DISCOUNT_PER_UPLOAD = 3;
+
+export function getDiscountedPrice(basePrice: number, materialsThisMonth: number): number {
+  const discount = materialsThisMonth * MATERIAL_DISCOUNT_PER_UPLOAD;
+  return Math.max(0, Math.round((basePrice - discount) * 100) / 100);
+}
+
 // Orden de prioridad en resultados de búsqueda: mayor primero
 export const PLAN_PRIORITY: Record<TeacherPlan, number> = {
   premium: 2,

@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { MATERIAL_DISCOUNT_PER_UPLOAD } from "@/lib/plans";
 import { registerUser, type RegisterState } from "./actions";
 
 const initialState: RegisterState = {};
@@ -10,6 +11,7 @@ export default function RegisterForm() {
     registerUser,
     initialState,
   );
+  const [role, setRole] = useState<"student" | "teacher">("student");
 
   return (
     <form action={formAction} className="mt-8 space-y-5">
@@ -23,7 +25,8 @@ export default function RegisterForm() {
               type="radio"
               name="role"
               value="student"
-              defaultChecked
+              checked={role === "student"}
+              onChange={() => setRole("student")}
               className="sr-only"
             />
             Alumno
@@ -33,11 +36,22 @@ export default function RegisterForm() {
               type="radio"
               name="role"
               value="teacher"
+              checked={role === "teacher"}
+              onChange={() => setRole("teacher")}
               className="sr-only"
             />
             Profesor
           </label>
         </div>
+
+        {role === "teacher" && (
+          <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">
+            💡 Si compartes materiales cada mes en tu sección de{" "}
+            <span className="font-medium">Materiales</span>, tus planes Pro y
+            Premium se abaratan {MATERIAL_DISCOUNT_PER_UPLOAD}€ por cada
+            material que subas ese mes.
+          </p>
+        )}
       </fieldset>
 
       <div>

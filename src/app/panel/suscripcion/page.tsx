@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { requireRole } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
-import { PLANS, getPlan } from "@/lib/plans";
+import { getMonthlyMaterialCount } from "@/lib/materials";
+import {
+  PLANS,
+  getPlan,
+  getDiscountedPrice,
+  MATERIAL_DISCOUNT_PER_UPLOAD,
+} from "@/lib/plans";
 import { startSubscriptionCheckout, openBillingPortal } from "./actions";
 
 export const metadata: Metadata = {
@@ -15,7 +21,10 @@ export default async function SuscripcionPage() {
     where: { userId: session.user.id },
   });
 
-  const currentPlan = getPlan(teacherProfile.plan);
+  const [currentPlan, materialsThisMonth] = await Promise.all([
+    getPlan(teacherProfile.plan),
+    getMonthlyMaterialCount(teacherProfile.id),
+  ]);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
@@ -41,9 +50,30 @@ export default async function SuscripcionPage() {
         </form>
       )}
 
+      <div className="mt-4 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        💡 Este mes has subido{" "}
+        <span className="font-semibold">
+          {materialsThisMonth} {materialsThisMonth === 1 ? "material" : "materiales"}
+        </span>
+        . Cada uno rebaja {MATERIAL_DISCOUNT_PER_UPLOAD}€ tus planes Pro y
+        Premium — ya se refleja en los precios de abajo.{" "}
+        {materialsThisMonth === 0 && (
+          <>
+            <a href="/panel/materiales" className="underline">
+              Sube tu primer material
+            </a>{" "}
+            para empezar a ahorrar.
+          </>
+        )}
+      </div>
+
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
         {PLANS.map((plan) => {
           const isCurrent = plan.id === teacherProfile.plan;
+          const discountedPrice =
+            plan.price > 0 ? getDiscountedPrice(plan.price, materialsThisMonth) : 0;
+          const hasDiscount = discountedPrice < plan.price;
+
           return (
             <div
               key={plan.id}
@@ -55,12 +85,28 @@ export default async function SuscripcionPage() {
             >
               <h2 className="text-lg font-bold text-stone-900">{plan.name}</h2>
               <p className="mt-1 text-sm text-stone-500">{plan.description}</p>
-              <p className="mt-4 text-3xl font-bold text-stone-900">
-                {plan.price === 0 ? "Gratis" : `${plan.price}€`}
-                {plan.price > 0 && (
-                  <span className="text-sm font-normal text-stone-400">/mes</span>
+              <div className="mt-4">
+                {hasDiscount && (
+                  <p className="text-sm text-stone-400 line-through">
+                    {plan.price}€/mes
+                  </p>
                 )}
-              </p>
+                <p className="text-3xl font-bold text-stone-900">
+                  {plan.price === 0
+                    ? "Gratis"
+                    : discountedPrice === 0
+                      ? "Gratis"
+                      : `${discountedPrice}€`}
+                  {plan.price > 0 && discountedPrice > 0 && (
+                    <span className="text-sm font-normal text-stone-400">/mes</span>
+                  )}
+                </p>
+                {hasDiscount && (
+                  <p className="text-xs font-medium text-rose-600">
+                    Precio con tu descuento por materiales
+                  </p>
+                )}
+              </div>
               <ul className="mt-4 flex-1 space-y-2 text-sm text-stone-600">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex gap-2">

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PLANS, PLATFORM_FEE_PERCENT } from "@/lib/plans";
+import { PLANS, PLATFORM_FEE_PERCENT, MATERIAL_DISCOUNT_PER_UPLOAD } from "@/lib/plans";
 
 export default function PricingSection() {
   return (
@@ -14,6 +14,10 @@ export default function PricingSection() {
           plataforma cobra un {PLATFORM_FEE_PERCENT}% de gestión sobre la
           primera clase que reserve cada alumno nuevo contigo — el resto es
           para ti.
+        </p>
+        <p className="mx-auto mt-2 max-w-2xl text-sm font-medium text-rose-600">
+          💡 Comparte materiales cada mes y ahorra: cada uno rebaja{" "}
+          {MATERIAL_DISCOUNT_PER_UPLOAD}€ tus planes Pro y Premium ese mes.
         </p>
       </div>
 

@@ -28,6 +28,16 @@ export default function EditProfileForm({
     initialState,
   );
 
+  const subjectsByCategory: [string, Subject[]][] = [];
+  for (const subject of allSubjects) {
+    const group = subjectsByCategory.find(([category]) => category === subject.category);
+    if (group) {
+      group[1].push(subject);
+    } else {
+      subjectsByCategory.push([subject.category, [subject]]);
+    }
+  }
+
   return (
     <form action={formAction} className="mt-8 space-y-6">
       <div>
@@ -57,26 +67,32 @@ export default function EditProfileForm({
         />
       </div>
 
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium text-stone-700">Materias</legend>
-        <div className="flex flex-wrap gap-2">
-          {allSubjects.map((subject) => (
-            <label
-              key={subject.id}
-              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-stone-300 px-3 py-1.5 text-sm has-[:checked]:border-teal-600 has-[:checked]:bg-teal-50 has-[:checked]:text-teal-700"
-            >
-              <input
-                type="checkbox"
-                name="subjectIds"
-                value={subject.id}
-                defaultChecked={selectedSubjectIds.includes(subject.id)}
-                className="sr-only"
-              />
-              {subject.name}
-            </label>
+      <div>
+        <label htmlFor="subjectIds" className="block text-sm font-medium text-stone-700">
+          Materias
+        </label>
+        <p className="mt-0.5 text-xs text-stone-400">
+          Mantén pulsado Ctrl (⌘ en Mac) para seleccionar varias materias.
+        </p>
+        <select
+          id="subjectIds"
+          name="subjectIds"
+          multiple
+          size={8}
+          defaultValue={selectedSubjectIds}
+          className={inputClass}
+        >
+          {subjectsByCategory.map(([category, subjects]) => (
+            <optgroup key={category} label={category}>
+              {subjects.map((subject) => (
+                <option key={subject.id} value={subject.id}>
+                  {subject.name}
+                </option>
+              ))}
+            </optgroup>
           ))}
-        </div>
-      </fieldset>
+        </select>
+      </div>
 
       <fieldset>
         <legend className="mb-2 text-sm font-medium text-stone-700">

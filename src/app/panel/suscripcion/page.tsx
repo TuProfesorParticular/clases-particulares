@@ -14,8 +14,13 @@ export const metadata: Metadata = {
   title: "Mi suscripción · TuProfesorParticular",
 };
 
-export default async function SuscripcionPage() {
+export default async function SuscripcionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ motivo?: string }>;
+}) {
   const session = await requireRole("teacher");
+  const { motivo } = await searchParams;
 
   const teacherProfile = await prisma.teacherProfile.findUniqueOrThrow({
     where: { userId: session.user.id },
@@ -38,6 +43,13 @@ export default async function SuscripcionPage() {
             </span>
           )}
       </p>
+
+      {motivo === "contactar-alumnos" && (
+        <p className="mt-3 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          🔒 Contactar con alumnos que buscan profesor es una ventaja de los
+          planes Pro y Premium.
+        </p>
+      )}
 
       {teacherProfile.stripeCustomerId && (
         <form action={openBillingPortal} className="mt-3">

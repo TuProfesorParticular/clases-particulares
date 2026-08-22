@@ -63,6 +63,9 @@ export default async function EditarPerfilPage() {
         <Link href="/panel/pagos" className="text-teal-600 hover:underline">
           Cobros
         </Link>
+        <Link href="/panel/alumnos" className="text-teal-600 hover:underline">
+          Alumnos buscan profesor
+        </Link>
       </div>
       <p className="mt-1 text-sm text-stone-500">
         Este es tu perfil público. {teacherProfile.status === "pending" && "Un administrador debe aprobarlo antes de que aparezca en las búsquedas."}

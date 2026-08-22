@@ -60,6 +60,11 @@ enum EthicsReportStatus {
   closed
 }
 
+enum StudentRequestStatus {
+  open
+  closed
+}
+
 // Curso concreto al que corresponde un material (más granular que Level)
 enum MaterialCourse {
   eso_1
@@ -95,6 +100,7 @@ model User {
   bookings             Booking[]
   reviews              Review[]
   ethicsReports        EthicsReport[] @relation("EthicsReporter")
+  studentRequests      StudentRequest[]
 
   @@map("users")
 }
@@ -194,9 +200,34 @@ model Subject {
 
   teacherSubjects TeacherSubject[]
   materials       Material[]
+  studentRequests StudentRequest[]
 
   @@index([category])
   @@map("subjects")
+}
+
+// Anuncio publicado por un alumno pidiendo profesor: el flujo inverso al
+// perfil de profesor. Los profesores lo consultan desde su panel; solo los
+// planes Pro/Premium pueden contactar (ver TeacherPlan).
+model StudentRequest {
+  id            String               @id @default(cuid())
+  studentId     String
+  subjectId     String
+  title         String
+  description   String
+  level         Level
+  modality      Modality
+  city          String?
+  budgetPerHour Decimal?             @db.Decimal(10, 2)
+  status        StudentRequestStatus @default(open)
+  createdAt     DateTime             @default(now())
+
+  student User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([subjectId])
+  @@map("student_requests")
 }
 
 // Material didáctico que un profesor deja disponible para descarga, asociado a una materia

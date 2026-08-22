@@ -41,6 +41,7 @@ export const PLANS: PlanDetails[] = [
       "Hasta 5 materias",
       "Aparece destacado en los resultados de búsqueda",
       "Materiales ilimitados",
+      "Contacta con alumnos que buscan profesor",
     ],
   },
   {
@@ -56,12 +57,20 @@ export const PLANS: PlanDetails[] = [
       "Materias ilimitadas",
       "Prioridad máxima en los resultados de búsqueda",
       "Estadísticas de tu anuncio (visitas y contactos)",
+      "Contacta con alumnos que buscan profesor",
     ],
   },
 ];
 
 export function getPlan(id: TeacherPlan): PlanDetails {
   return PLANS.find((p) => p.id === id) ?? PLANS[0];
+}
+
+// Solo los planes de pago pueden contactar con alumnos que publican un
+// anuncio pidiendo profesor (ver StudentRequest) — es una ventaja más de
+// la visibilidad de pago, igual que aparecer destacado en las búsquedas.
+export function canContactStudents(plan: TeacherPlan): boolean {
+  return plan !== "free";
 }
 
 // Descuento por compartir materiales: cada material subido ese mes rebaja

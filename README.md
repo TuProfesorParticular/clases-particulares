@@ -112,6 +112,17 @@ Si se cambia el esquema de Prisma, aplicar la migración también en producción
 DATABASE_URL="<DIRECT_URL de Supabase>" npx prisma migrate deploy
 ```
 
+⚠️ **`tuprofesorparticular.vercel.app` no se actualiza automáticamente en cada nuevo despliegue** —
+es un alias manual, no el dominio por defecto del proyecto. Tras cada deploy (automático o
+manual), hay que re-apuntarlo al último:
+
+```bash
+npx vercel ls   # copia la URL "Ready" más reciente
+npx vercel alias set <esa-url> tuprofesorparticular.vercel.app
+```
+
+Esto deja de ser necesario en cuanto se conecte un dominio propio comprado (ver "Qué falta").
+
 ## Qué falta (siguientes pasos)
 
 Funcionalmente el MVP descrito en el documento está completo y desplegado (búsqueda, perfil de

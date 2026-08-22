@@ -1,4 +1,4 @@
-import type { Level, Modality } from "@prisma/client";
+import type { Level, MaterialCourse, Modality } from "@prisma/client";
 
 export const MODALITY_LABELS: Record<Modality, string> = {
   in_person: "Presencial a domicilio",
@@ -73,7 +73,7 @@ export const CATEGORIES: CategorySection[] = [
   {
     slug: "Cursos oficiales",
     label: "Cursos oficiales",
-    description: "Preparación de certificaciones oficiales de inglés, valenciano y francés.",
+    description: "Preparación de certificaciones oficiales de cualquier idioma.",
     colors: {
       bg: "bg-amber-50",
       border: "border-amber-200",
@@ -94,3 +94,40 @@ export const MATERIALS_CATEGORY: CategorySection = {
     ring: "hover:border-rose-400",
   },
 };
+
+// Sección especial: no es una categoría de materia (Subject.category), sino un
+// filtro por nivel (Level = universidad) que cruza todas las materias.
+export const UNIVERSITY_SECTION: CategorySection = {
+  slug: "Universidad",
+  label: "Universidad",
+  description: "Profesores para cualquier materia a nivel universitario.",
+  colors: {
+    bg: "bg-indigo-50",
+    border: "border-indigo-200",
+    text: "text-indigo-700",
+    ring: "hover:border-indigo-400",
+  },
+};
+
+// Cursos para organizar los Materiales dentro de cada categoría
+export const MATERIAL_COURSE_LABELS: Record<MaterialCourse, string> = {
+  eso_1: "1º ESO",
+  eso_2: "2º ESO",
+  eso_3: "3º ESO",
+  eso_4: "4º ESO",
+  bachillerato_1: "1º Bachillerato",
+  bachillerato_2: "2º Bachillerato",
+  universidad: "Universidad",
+  oposiciones: "Oposiciones",
+};
+
+export const MATERIAL_COURSE_ORDER: MaterialCourse[] = [
+  "eso_1",
+  "eso_2",
+  "eso_3",
+  "eso_4",
+  "bachillerato_1",
+  "bachillerato_2",
+  "universidad",
+  "oposiciones",
+];

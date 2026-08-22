@@ -34,10 +34,20 @@ const subjects: { name: string; category: string }[] = [
   { name: "Oposición Enfermería", category: "Oposiciones" },
   { name: "Oposición Justicia", category: "Oposiciones" },
 
-  // Cursos oficiales (certificaciones de idiomas)
+  // Cursos oficiales (certificaciones de idiomas — cualquier idioma, no solo los tres iniciales)
   { name: "Inglés (Cambridge / EOI)", category: "Cursos oficiales" },
   { name: "Valenciano (JQCV)", category: "Cursos oficiales" },
   { name: "Francés (DELF / DALF)", category: "Cursos oficiales" },
+  { name: "Alemán (Goethe-Institut / EOI)", category: "Cursos oficiales" },
+  { name: "Italiano (CELI / EOI)", category: "Cursos oficiales" },
+  { name: "Portugués (CAPLE / EOI)", category: "Cursos oficiales" },
+  { name: "Chino (HSK)", category: "Cursos oficiales" },
+  { name: "Japonés (JLPT)", category: "Cursos oficiales" },
+  { name: "Árabe (EOI)", category: "Cursos oficiales" },
+  { name: "Ruso (TORFL / EOI)", category: "Cursos oficiales" },
+  { name: "Catalán (JQCV / EOI)", category: "Cursos oficiales" },
+  { name: "Euskera (EGA / EOI)", category: "Cursos oficiales" },
+  { name: "Gallego (CELGA)", category: "Cursos oficiales" },
 ];
 
 async function main() {

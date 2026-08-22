@@ -1,20 +1,24 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CATEGORIES, MATERIALS_CATEGORY } from "@/lib/constants";
-import { getMaterialsByCategory } from "@/lib/materials";
+import type { MaterialCourse } from "@prisma/client";
+import { CATEGORIES, MATERIAL_COURSE_LABELS, MATERIAL_COURSE_ORDER } from "@/lib/constants";
+import {
+  getMaterialCountsByCourse,
+  getMaterialsByCategoryAndCourse,
+} from "@/lib/materials";
 
 export const metadata: Metadata = {
   title: "Materiales · TuProfesorParticular",
 };
 
-type SearchParams = { categoria?: string };
+type SearchParams = { categoria?: string; curso?: string };
 
 export default async function MaterialesPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { categoria } = await searchParams;
+  const { categoria, curso } = await searchParams;
 
   if (!categoria) {
     return (
@@ -42,10 +46,49 @@ export default async function MaterialesPage({
     );
   }
 
-  const category = [...CATEGORIES, MATERIALS_CATEGORY].find(
+  const category = CATEGORIES.find(
     (c) => c.slug.toLowerCase() === categoria.toLowerCase(),
   );
-  const materials = await getMaterialsByCategory(categoria);
+
+  const isValidCourse = (
+    MATERIAL_COURSE_ORDER as string[]
+  ).includes(curso ?? "");
+
+  if (!curso || !isValidCourse) {
+    const counts = await getMaterialCountsByCourse(categoria);
+
+    return (
+      <main className="mx-auto max-w-4xl px-4 py-10">
+        <Link href="/materiales" className="text-sm text-teal-600 hover:underline">
+          ← Todas las categorías
+        </Link>
+        <h1 className="mt-2 text-3xl font-bold text-stone-900">
+          {category?.label ?? categoria}
+        </h1>
+        <p className="mt-2 text-stone-500">Elige el curso para ver los materiales.</p>
+
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {MATERIAL_COURSE_ORDER.map((courseValue) => (
+            <Link
+              key={courseValue}
+              href={`/materiales?categoria=${encodeURIComponent(categoria)}&curso=${courseValue}`}
+              className={`rounded-xl border p-4 text-center transition hover:-translate-y-0.5 hover:shadow-md ${category?.colors.bg ?? "bg-stone-50"} ${category?.colors.border ?? "border-stone-200"}`}
+            >
+              <p className={`font-semibold ${category?.colors.text ?? "text-stone-700"}`}>
+                {MATERIAL_COURSE_LABELS[courseValue]}
+              </p>
+              <p className="mt-1 text-xs text-stone-400">
+                {counts.get(courseValue) ?? 0} materiales
+              </p>
+            </Link>
+          ))}
+        </div>
+      </main>
+    );
+  }
+
+  const course = curso as MaterialCourse;
+  const materials = await getMaterialsByCategoryAndCourse(categoria, course);
 
   const materialsBySubject = new Map<string, typeof materials>();
   for (const material of materials) {
@@ -56,17 +99,19 @@ export default async function MaterialesPage({
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/materiales" className="text-sm text-teal-600 hover:underline">
-        ← Todas las categorías
+      <Link
+        href={`/materiales?categoria=${encodeURIComponent(categoria)}`}
+        className="text-sm text-teal-600 hover:underline"
+      >
+        ← {category?.label ?? categoria}
       </Link>
       <h1 className="mt-2 text-3xl font-bold text-stone-900">
-        {category?.label ?? categoria}
+        {MATERIAL_COURSE_LABELS[course]}
       </h1>
-      <p className="mt-2 text-stone-500">{category?.description}</p>
 
       {materialsBySubject.size === 0 ? (
         <p className="mt-8 rounded-lg border border-dashed border-stone-300 p-8 text-center text-stone-400">
-          Todavía no hay materiales en esta categoría.
+          Todavía no hay materiales en este curso.
         </p>
       ) : (
         <div className="mt-8 space-y-8">

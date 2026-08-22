@@ -2,6 +2,7 @@
 
 import { useActionState, useRef, useEffect } from "react";
 import type { Subject } from "@prisma/client";
+import { MATERIAL_COURSE_LABELS, MATERIAL_COURSE_ORDER } from "@/lib/constants";
 import { uploadMaterial, type UploadMaterialState } from "./actions";
 
 const initialState: UploadMaterialState = {};
@@ -37,6 +38,20 @@ export default function UploadMaterialForm({ subjects }: { subjects: Subject[] }
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
               {subject.category} · {subject.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="course" className="block text-sm font-medium text-stone-700">
+          Curso
+        </label>
+        <select id="course" name="course" required className={fieldClass}>
+          <option value="">Selecciona un curso</option>
+          {MATERIAL_COURSE_ORDER.map((course) => (
+            <option key={course} value={course}>
+              {MATERIAL_COURSE_LABELS[course]}
             </option>
           ))}
         </select>

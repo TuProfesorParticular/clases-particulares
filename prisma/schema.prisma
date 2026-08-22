@@ -60,6 +60,18 @@ enum EthicsReportStatus {
   closed
 }
 
+// Curso concreto al que corresponde un material (más granular que Level)
+enum MaterialCourse {
+  eso_1
+  eso_2
+  eso_3
+  eso_4
+  bachillerato_1
+  bachillerato_2
+  universidad
+  oposiciones
+}
+
 model User {
   id            String     @id @default(cuid())
   email         String     @unique
@@ -189,19 +201,21 @@ model Subject {
 
 // Material didáctico que un profesor deja disponible para descarga, asociado a una materia
 model Material {
-  id               String   @id @default(cuid())
+  id               String         @id @default(cuid())
   title            String
   description      String?
   subjectId        String
   teacherProfileId String
+  course           MaterialCourse
   fileUrl          String
   fileName         String
-  createdAt        DateTime @default(now())
+  createdAt        DateTime       @default(now())
 
   subject        Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   teacherProfile TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
 
   @@index([subjectId])
+  @@index([course])
   @@map("materials")
 }
 

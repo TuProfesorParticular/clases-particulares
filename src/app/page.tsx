@@ -1,11 +1,12 @@
 import Link from "next/link";
-import type { Modality, Level } from "@prisma/client";
+import type { Modality, Level, Subject } from "@prisma/client";
 import { getAllSubjects, getTeacherSearchResults } from "@/lib/teachers";
-import { CATEGORIES, MATERIALS_CATEGORY } from "@/lib/constants";
+import { CATEGORIES, MATERIALS_CATEGORY, UNIVERSITY_SECTION } from "@/lib/constants";
 import SearchFilters from "@/components/SearchFilters";
 import TeacherCard from "@/components/TeacherCard";
 import PricingSection from "@/components/PricingSection";
 import Testimonials from "@/components/Testimonials";
+import CategorySubjectDropdown from "@/components/CategorySubjectDropdown";
 
 type SearchParams = {
   materia?: string;
@@ -21,6 +22,7 @@ const CATEGORY_ICONS: Record<string, string> = {
   Humanidades: "📚",
   Oposiciones: "🏛️",
   "Cursos oficiales": "🌍",
+  Universidad: "🎓",
 };
 
 export default async function HomePage({
@@ -45,6 +47,14 @@ export default async function HomePage({
   const activeCategory = CATEGORIES.find(
     (c) => c.slug.toLowerCase() === params.categoria?.toLowerCase(),
   );
+  const isUniversityFilter = !activeCategory && params.nivel === "universidad";
+
+  const subjectsByCategory = new Map<string, Subject[]>();
+  for (const subject of subjects) {
+    const list = subjectsByCategory.get(subject.category) ?? [];
+    list.push(subject);
+    subjectsByCategory.set(subject.category, list);
+  }
 
   return (
     <>
@@ -66,20 +76,43 @@ export default async function HomePage({
       </section>
 
       <main className="mx-auto max-w-6xl px-4 py-10">
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map((category) => (
-            <Link
+            <div
               key={category.slug}
-              href={`/?categoria=${encodeURIComponent(category.slug)}`}
-              className={`group rounded-2xl border p-5 transition hover:-translate-y-1 hover:shadow-lg ${category.colors.bg} ${category.colors.border} ${category.colors.ring}`}
+              className={`rounded-2xl border p-5 transition hover:shadow-lg ${category.colors.bg} ${category.colors.border} ${category.colors.ring}`}
             >
-              <span className="text-2xl">{CATEGORY_ICONS[category.slug]}</span>
-              <h2 className={`mt-2 text-lg font-bold ${category.colors.text}`}>
-                {category.label}
-              </h2>
-              <p className="mt-1 text-xs text-stone-600">{category.description}</p>
-            </Link>
+              <Link href={`/?categoria=${encodeURIComponent(category.slug)}`}>
+                <span className="text-2xl">{CATEGORY_ICONS[category.slug]}</span>
+                <h2 className={`mt-2 text-lg font-bold ${category.colors.text}`}>
+                  {category.label}
+                </h2>
+                <p className="mt-1 text-xs text-stone-600">{category.description}</p>
+              </Link>
+              <CategorySubjectDropdown
+                subjects={subjectsByCategory.get(category.slug) ?? []}
+              />
+            </div>
           ))}
+
+          <div
+            className={`rounded-2xl border p-5 transition hover:shadow-lg ${UNIVERSITY_SECTION.colors.bg} ${UNIVERSITY_SECTION.colors.border} ${UNIVERSITY_SECTION.colors.ring}`}
+          >
+            <Link href="/?nivel=universidad">
+              <span className="text-2xl">{CATEGORY_ICONS.Universidad}</span>
+              <h2 className={`mt-2 text-lg font-bold ${UNIVERSITY_SECTION.colors.text}`}>
+                {UNIVERSITY_SECTION.label}
+              </h2>
+              <p className="mt-1 text-xs text-stone-600">
+                {UNIVERSITY_SECTION.description}
+              </p>
+            </Link>
+            <CategorySubjectDropdown
+              subjects={subjects}
+              extraParams={{ nivel: "universidad" }}
+            />
+          </div>
+
           <Link
             href="/materiales"
             className={`group rounded-2xl border p-5 transition hover:-translate-y-1 hover:shadow-lg ${MATERIALS_CATEGORY.colors.bg} ${MATERIALS_CATEGORY.colors.border} ${MATERIALS_CATEGORY.colors.ring}`}
@@ -109,10 +142,16 @@ export default async function HomePage({
                   en <span className="font-medium">{activeCategory.label}</span>
                 </>
               )}
+              {isUniversityFilter && (
+                <>
+                  {" "}
+                  en <span className="font-medium">Universidad</span>
+                </>
+              )}
             </p>
-            {activeCategory && (
+            {(activeCategory || isUniversityFilter) && (
               <Link href="/" className="text-sm text-teal-600 hover:underline">
-                Quitar filtro de categoría
+                Quitar filtro
               </Link>
             )}
           </div>

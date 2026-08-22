@@ -5,11 +5,15 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth-helpers";
 import { uploadMaterialFile, deleteMaterialFile } from "@/lib/storage";
+import { MATERIAL_COURSE_ORDER } from "@/lib/constants";
 
 const schema = z.object({
   title: z.string().min(2, "Introduce un título").max(200),
   description: z.string().max(1000).optional(),
   subjectId: z.string().min(1, "Selecciona una materia"),
+  course: z.enum(MATERIAL_COURSE_ORDER as [string, ...string[]], {
+    message: "Selecciona un curso",
+  }),
 });
 
 export type UploadMaterialState = {
@@ -27,6 +31,7 @@ export async function uploadMaterial(
     title: formData.get("title"),
     description: formData.get("description") || undefined,
     subjectId: formData.get("subjectId"),
+    course: formData.get("course"),
   });
 
   if (!parsed.success) {
@@ -49,6 +54,7 @@ export async function uploadMaterial(
       title: parsed.data.title,
       description: parsed.data.description,
       subjectId: parsed.data.subjectId,
+      course: parsed.data.course as (typeof MATERIAL_COURSE_ORDER)[number],
       teacherProfileId: teacherProfile.id,
       fileUrl,
       fileName,

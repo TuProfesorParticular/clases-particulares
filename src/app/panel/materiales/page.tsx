@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { getAllSubjects } from "@/lib/teachers";
 import { getMaterialsForTeacher } from "@/lib/materials";
+import { MATERIAL_COURSE_LABELS } from "@/lib/constants";
 import UploadMaterialForm from "./UploadMaterialForm";
 import { deleteMaterial } from "./actions";
 
@@ -46,7 +47,9 @@ export default async function MisMaterialesPage() {
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-stone-900">{material.title}</p>
-                <p className="text-xs text-stone-500">{material.subject.name}</p>
+                <p className="text-xs text-stone-500">
+                  {material.subject.name} · {MATERIAL_COURSE_LABELS[material.course]}
+                </p>
               </div>
               <form action={deleteMaterial}>
                 <input type="hidden" name="materialId" value={material.id} />

@@ -11,7 +11,7 @@ const inputClass =
   "mt-1 block w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500";
 
 type EditProfileFormProps = {
-  teacherProfile: TeacherProfile;
+  teacherProfile: Omit<TeacherProfile, "pricePerHour"> & { pricePerHour: number };
   allSubjects: Subject[];
   selectedSubjectIds: string[];
   selectedLevels: string[];

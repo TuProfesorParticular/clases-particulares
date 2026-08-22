@@ -11,8 +11,6 @@ export function requireStripe(): Stripe {
   return stripe;
 }
 
-const APP_URL = process.env.APP_URL || "http://localhost:3000";
-
 export const PRICE_IDS = {
   pro: process.env.STRIPE_PRICE_PRO,
   premium: process.env.STRIPE_PRICE_PREMIUM,

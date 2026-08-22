@@ -7,6 +7,7 @@ import TeacherCard from "@/components/TeacherCard";
 import PricingSection from "@/components/PricingSection";
 import Testimonials from "@/components/Testimonials";
 import FeaturedTeachers from "@/components/FeaturedTeachers";
+import HeroPhotos from "@/components/HeroPhotos";
 
 type SearchParams = {
   materia?: string;
@@ -63,6 +64,7 @@ export default async function HomePage({
   return (
     <>
       <section className="relative overflow-hidden border-b border-stone-200 bg-white">
+        <HeroPhotos />
         <div
           aria-hidden
           className="pointer-events-none absolute -top-24 left-1/2 h-72 w-[36rem] -translate-x-1/2 rounded-full bg-teal-200/40 blur-3xl"
@@ -76,6 +78,37 @@ export default async function HomePage({
             Busca por materia, ubicación o modalidad y contacta directamente.
             Sin intermediarios innecesarios, sin letra pequeña.
           </p>
+
+          <form
+            action="/"
+            method="get"
+            className="mx-auto mt-8 flex max-w-xl flex-col gap-2 rounded-2xl border border-stone-200 bg-white/90 p-2 shadow-lg backdrop-blur sm:flex-row"
+          >
+            <input
+              type="text"
+              name="materia"
+              list="hero-subjects-list"
+              placeholder="¿Qué quieres aprender? (ej. Matemáticas)"
+              className="flex-1 rounded-lg border-0 px-3 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            />
+            <datalist id="hero-subjects-list">
+              {subjects.map((subject) => (
+                <option key={subject.id} value={subject.name} />
+              ))}
+            </datalist>
+            <input
+              type="text"
+              name="ciudad"
+              placeholder="Ciudad (opcional)"
+              className="rounded-lg border-0 px-3 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-teal-500 sm:w-40"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-teal-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
+            >
+              Buscar
+            </button>
+          </form>
         </div>
       </section>
 

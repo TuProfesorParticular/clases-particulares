@@ -1,17 +1,20 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { logout } from "@/app/actions";
+import MobileMenu from "./MobileMenu";
 
 export default async function Navbar() {
   const session = await auth();
+  const isLoggedIn = Boolean(session?.user);
 
   return (
-    <header className="border-b border-stone-200 bg-white">
+    <header className="relative border-b border-stone-200 bg-white">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link href="/" className="text-lg font-bold text-stone-900">
           Tu<span className="text-teal-600">Profesor</span>Particular
         </Link>
-        <div className="flex items-center gap-4 text-sm font-medium">
+
+        <div className="hidden items-center gap-4 text-sm font-medium sm:flex">
           <Link href="/" className="text-stone-600 hover:text-stone-900">
             Buscar profesores
           </Link>
@@ -19,7 +22,7 @@ export default async function Navbar() {
             Materiales
           </Link>
 
-          {session?.user ? (
+          {isLoggedIn ? (
             <>
               <Link href="/panel" className="text-stone-600 hover:text-stone-900">
                 Mi panel
@@ -47,6 +50,8 @@ export default async function Navbar() {
             </>
           )}
         </div>
+
+        <MobileMenu isLoggedIn={isLoggedIn} />
       </nav>
     </header>
   );

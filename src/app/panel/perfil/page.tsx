@@ -77,7 +77,10 @@ export default async function EditarPerfilPage() {
       </p>
 
       <EditProfileForm
-        teacherProfile={teacherProfile}
+        teacherProfile={{
+          ...teacherProfile,
+          pricePerHour: Number(teacherProfile.pricePerHour),
+        }}
         allSubjects={allSubjects}
         selectedSubjectIds={selectedSubjectIds}
         selectedLevels={selectedLevels}

@@ -2,7 +2,7 @@ import { getFeaturedTeachers } from "@/lib/teachers";
 import TeacherCard from "@/components/TeacherCard";
 
 export default async function FeaturedTeachers() {
-  const teachers = await getFeaturedTeachers(3);
+  const teachers = await getFeaturedTeachers(6);
 
   if (teachers.length === 0) return null;
 
@@ -13,7 +13,7 @@ export default async function FeaturedTeachers() {
         Los mejor valorados de la plataforma. La selección se renueva cada
         pocas horas.
       </p>
-      <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto mt-4 grid max-w-2xl grid-cols-1 gap-4">
         {teachers.map((teacher) => (
           <TeacherCard key={teacher.id} teacher={teacher} />
         ))}

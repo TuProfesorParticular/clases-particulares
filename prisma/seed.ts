@@ -11,9 +11,7 @@ const subjects: { name: string; category: string }[] = [
   { name: "Informática", category: "Ciencias" },
 
   // Humanidades
-  { name: "Historia", category: "Humanidades" },
   { name: "Filosofía", category: "Humanidades" },
-  { name: "Geografía", category: "Humanidades" },
   { name: "Lengua y Literatura", category: "Humanidades" },
   { name: "Latín", category: "Humanidades" },
   { name: "Griego", category: "Humanidades" },
@@ -22,8 +20,15 @@ const subjects: { name: string; category: string }[] = [
   { name: "Francés", category: "Humanidades" },
   { name: "Alemán", category: "Humanidades" },
   { name: "Español", category: "Humanidades" },
-  { name: "Economía", category: "Humanidades" },
   { name: "Música", category: "Humanidades" },
+
+  // Ciencias Sociales (itinerario de Bachillerato / "Ciencias Sociales" de la ESO)
+  { name: "Historia", category: "Ciencias Sociales" },
+  { name: "Geografía", category: "Ciencias Sociales" },
+  { name: "Historia del Mundo Contemporáneo", category: "Ciencias Sociales" },
+  { name: "Economía", category: "Ciencias Sociales" },
+  { name: "Economía de la Empresa", category: "Ciencias Sociales" },
+  { name: "Matemáticas Aplicadas a las Ciencias Sociales", category: "Ciencias Sociales" },
 
   // Oposiciones (las más comunes y demandadas)
   { name: "Oposición Secundaria", category: "Oposiciones" },

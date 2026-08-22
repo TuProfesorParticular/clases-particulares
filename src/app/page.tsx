@@ -21,6 +21,7 @@ type SearchParams = {
 const CATEGORY_ICONS: Record<string, string> = {
   Ciencias: "🔬",
   Humanidades: "📚",
+  "Ciencias Sociales": "🗺️",
   Oposiciones: "🏛️",
   "Cursos oficiales": "🌍",
   Universidad: "🎓",

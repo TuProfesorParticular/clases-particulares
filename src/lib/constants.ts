@@ -51,12 +51,23 @@ export const CATEGORIES: CategorySection[] = [
   {
     slug: "Humanidades",
     label: "Humanidades",
-    description: "Historia, filosofía, geografía, lengua, latín, griego, idiomas...",
+    description: "Filosofía, lengua, latín, griego, idiomas...",
     colors: {
       bg: "bg-violet-50",
       border: "border-violet-200",
       text: "text-violet-700",
       ring: "hover:border-violet-400",
+    },
+  },
+  {
+    slug: "Ciencias Sociales",
+    label: "Ciencias Sociales",
+    description: "Historia, geografía, economía, matemáticas sociales...",
+    colors: {
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      text: "text-orange-700",
+      ring: "hover:border-orange-400",
     },
   },
   {

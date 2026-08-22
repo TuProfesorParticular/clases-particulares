@@ -1,12 +1,12 @@
 import Link from "next/link";
-import type { Modality, Level, Subject } from "@prisma/client";
+import type { Modality, Level } from "@prisma/client";
 import { getAllSubjects, getTeacherSearchResults } from "@/lib/teachers";
 import { CATEGORIES, MATERIALS_CATEGORY, UNIVERSITY_SECTION } from "@/lib/constants";
 import SearchFilters from "@/components/SearchFilters";
 import TeacherCard from "@/components/TeacherCard";
 import PricingSection from "@/components/PricingSection";
 import Testimonials from "@/components/Testimonials";
-import CategorySubjectDropdown from "@/components/CategorySubjectDropdown";
+import FeaturedTeachers from "@/components/FeaturedTeachers";
 
 type SearchParams = {
   materia?: string;
@@ -32,29 +32,33 @@ export default async function HomePage({
 }) {
   const params = await searchParams;
 
-  const [subjects, teachers] = await Promise.all([
-    getAllSubjects(),
-    getTeacherSearchResults({
-      subject: params.materia || undefined,
-      category: params.categoria || undefined,
-      city: params.ciudad || undefined,
-      modality: (params.modalidad as Modality) || undefined,
-      level: (params.nivel as Level) || undefined,
-      maxPrice: params.precioMax ? Number(params.precioMax) : undefined,
-    }),
-  ]);
+  const hasActiveSearch = Boolean(
+    params.materia ||
+      params.categoria ||
+      params.ciudad ||
+      params.modalidad ||
+      params.nivel ||
+      params.precioMax,
+  );
 
   const activeCategory = CATEGORIES.find(
     (c) => c.slug.toLowerCase() === params.categoria?.toLowerCase(),
   );
   const isUniversityFilter = !activeCategory && params.nivel === "universidad";
 
-  const subjectsByCategory = new Map<string, Subject[]>();
-  for (const subject of subjects) {
-    const list = subjectsByCategory.get(subject.category) ?? [];
-    list.push(subject);
-    subjectsByCategory.set(subject.category, list);
-  }
+  const [subjects, teachers] = await Promise.all([
+    getAllSubjects(),
+    hasActiveSearch
+      ? getTeacherSearchResults({
+          subject: params.materia || undefined,
+          category: params.categoria || undefined,
+          city: params.ciudad || undefined,
+          modality: (params.modalidad as Modality) || undefined,
+          level: (params.nivel as Level) || undefined,
+          maxPrice: params.precioMax ? Number(params.precioMax) : undefined,
+        })
+      : Promise.resolve(null),
+  ]);
 
   return (
     <>
@@ -78,44 +82,35 @@ export default async function HomePage({
       <main className="mx-auto max-w-6xl px-4 py-10">
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map((category) => (
-            <div
+            <Link
               key={category.slug}
-              className={`rounded-2xl border p-5 transition hover:shadow-lg ${category.colors.bg} ${category.colors.border} ${category.colors.ring}`}
+              href={`/?categoria=${encodeURIComponent(category.slug)}`}
+              className={`rounded-2xl border p-5 transition hover:-translate-y-1 hover:shadow-lg ${category.colors.bg} ${category.colors.border} ${category.colors.ring}`}
             >
-              <Link href={`/?categoria=${encodeURIComponent(category.slug)}`}>
-                <span className="text-2xl">{CATEGORY_ICONS[category.slug]}</span>
-                <h2 className={`mt-2 text-lg font-bold ${category.colors.text}`}>
-                  {category.label}
-                </h2>
-                <p className="mt-1 text-xs text-stone-600">{category.description}</p>
-              </Link>
-              <CategorySubjectDropdown
-                subjects={subjectsByCategory.get(category.slug) ?? []}
-              />
-            </div>
+              <span className="text-2xl">{CATEGORY_ICONS[category.slug]}</span>
+              <h2 className={`mt-2 text-lg font-bold ${category.colors.text}`}>
+                {category.label}
+              </h2>
+              <p className="mt-1 text-xs text-stone-600">{category.description}</p>
+            </Link>
           ))}
 
-          <div
-            className={`rounded-2xl border p-5 transition hover:shadow-lg ${UNIVERSITY_SECTION.colors.bg} ${UNIVERSITY_SECTION.colors.border} ${UNIVERSITY_SECTION.colors.ring}`}
+          <Link
+            href="/?nivel=universidad"
+            className={`rounded-2xl border p-5 transition hover:-translate-y-1 hover:shadow-lg ${UNIVERSITY_SECTION.colors.bg} ${UNIVERSITY_SECTION.colors.border} ${UNIVERSITY_SECTION.colors.ring}`}
           >
-            <Link href="/?nivel=universidad">
-              <span className="text-2xl">{CATEGORY_ICONS.Universidad}</span>
-              <h2 className={`mt-2 text-lg font-bold ${UNIVERSITY_SECTION.colors.text}`}>
-                {UNIVERSITY_SECTION.label}
-              </h2>
-              <p className="mt-1 text-xs text-stone-600">
-                {UNIVERSITY_SECTION.description}
-              </p>
-            </Link>
-            <CategorySubjectDropdown
-              subjects={subjects}
-              extraParams={{ nivel: "universidad" }}
-            />
-          </div>
+            <span className="text-2xl">{CATEGORY_ICONS.Universidad}</span>
+            <h2 className={`mt-2 text-lg font-bold ${UNIVERSITY_SECTION.colors.text}`}>
+              {UNIVERSITY_SECTION.label}
+            </h2>
+            <p className="mt-1 text-xs text-stone-600">
+              {UNIVERSITY_SECTION.description}
+            </p>
+          </Link>
 
           <Link
             href="/materiales"
-            className={`group rounded-2xl border p-5 transition hover:-translate-y-1 hover:shadow-lg ${MATERIALS_CATEGORY.colors.bg} ${MATERIALS_CATEGORY.colors.border} ${MATERIALS_CATEGORY.colors.ring}`}
+            className={`rounded-2xl border p-5 transition hover:-translate-y-1 hover:shadow-lg ${MATERIALS_CATEGORY.colors.bg} ${MATERIALS_CATEGORY.colors.border} ${MATERIALS_CATEGORY.colors.ring}`}
           >
             <span className="text-2xl">📁</span>
             <h2 className={`mt-2 text-lg font-bold ${MATERIALS_CATEGORY.colors.text}`}>
@@ -127,47 +122,53 @@ export default async function HomePage({
           </Link>
         </section>
 
-        <section className="mt-10">
-          <SearchFilters subjects={subjects} defaultValues={params} />
-        </section>
-
-        <section className="mt-10">
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-stone-500">
-              {teachers.length}{" "}
-              {teachers.length === 1 ? "profesor encontrado" : "profesores encontrados"}
-              {activeCategory && (
-                <>
-                  {" "}
-                  en <span className="font-medium">{activeCategory.label}</span>
-                </>
-              )}
-              {isUniversityFilter && (
-                <>
-                  {" "}
-                  en <span className="font-medium">Universidad</span>
-                </>
-              )}
-            </p>
-            {(activeCategory || isUniversityFilter) && (
+        {hasActiveSearch ? (
+          <>
+            <section className="mt-10">
               <Link href="/" className="text-sm text-teal-600 hover:underline">
-                Quitar filtro
+                ← Todas las categorías
               </Link>
-            )}
-          </div>
+              <div className="mt-3">
+                <SearchFilters subjects={subjects} defaultValues={params} />
+              </div>
+            </section>
 
-          {teachers.length > 0 ? (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {teachers.map((teacher) => (
-                <TeacherCard key={teacher.id} teacher={teacher} />
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-lg border border-dashed border-stone-300 p-8 text-center text-stone-400">
-              No hay profesores que coincidan con tu búsqueda todavía.
-            </p>
-          )}
-        </section>
+            <section className="mt-10">
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm text-stone-500">
+                  {teachers?.length ?? 0}{" "}
+                  {teachers?.length === 1 ? "profesor encontrado" : "profesores encontrados"}
+                  {activeCategory && (
+                    <>
+                      {" "}
+                      en <span className="font-medium">{activeCategory.label}</span>
+                    </>
+                  )}
+                  {isUniversityFilter && (
+                    <>
+                      {" "}
+                      en <span className="font-medium">Universidad</span>
+                    </>
+                  )}
+                </p>
+              </div>
+
+              {teachers && teachers.length > 0 ? (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {teachers.map((teacher) => (
+                    <TeacherCard key={teacher.id} teacher={teacher} />
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-lg border border-dashed border-stone-300 p-8 text-center text-stone-400">
+                  No hay profesores que coincidan con tu búsqueda todavía.
+                </p>
+              )}
+            </section>
+          </>
+        ) : (
+          <FeaturedTeachers />
+        )}
 
         <Testimonials />
 

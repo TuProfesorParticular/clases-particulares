@@ -51,20 +51,27 @@ export default async function SuscripcionPage() {
       )}
 
       <div className="mt-4 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700">
-        💡 Este mes has subido{" "}
-        <span className="font-semibold">
-          {materialsThisMonth} {materialsThisMonth === 1 ? "material" : "materiales"}
-        </span>
-        . Cada uno rebaja {MATERIAL_DISCOUNT_PER_UPLOAD}€ tus planes Pro y
-        Premium — ya se refleja en los precios de abajo.{" "}
-        {materialsThisMonth === 0 && (
-          <>
-            <a href="/panel/materiales" className="underline">
-              Sube tu primer material
-            </a>{" "}
-            para empezar a ahorrar.
-          </>
-        )}
+        <p>
+          💡 Este mes llevas{" "}
+          <span className="font-semibold">
+            {materialsThisMonth} {materialsThisMonth === 1 ? "material" : "materiales"}
+          </span>{" "}
+          subidos. Cada uno rebaja {MATERIAL_DISCOUNT_PER_UPLOAD}€ el precio de
+          hoy de los planes Pro y Premium — ya se refleja abajo.{" "}
+          {materialsThisMonth === 0 && (
+            <>
+              <a href="/panel/materiales" className="underline">
+                Sube tu primer material
+              </a>{" "}
+              para empezar a ahorrar.
+            </>
+          )}
+        </p>
+        <p className="mt-2 font-medium">
+          ⚠️ El descuento no es fijo: cada renovación mensual se recalcula
+          sola según lo que subas ese mes. Si un mes no subes ningún
+          material, tu siguiente cuota vuelve al precio original del plan.
+        </p>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">

@@ -18,6 +18,7 @@ export default function PricingSection() {
         <p className="mx-auto mt-2 max-w-2xl text-sm font-medium text-rose-600">
           💡 Comparte materiales cada mes y ahorra: cada uno rebaja{" "}
           {MATERIAL_DISCOUNT_PER_UPLOAD}€ tus planes Pro y Premium ese mes.
+          Si un mes no subes nada, la cuota vuelve al precio original.
         </p>
       </div>
 

@@ -59,7 +59,7 @@ export function getMaterialsForTeacher(teacherProfileId: string) {
 }
 
 // Materiales subidos por el profesor en lo que va del mes natural actual —
-// base del descuento en los planes Pro/Premium.
+// base del descuento que se ve/cobra al suscribirse o cambiar de plan hoy.
 export function getMonthlyMaterialCount(teacherProfileId: string) {
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -68,6 +68,21 @@ export function getMonthlyMaterialCount(teacherProfileId: string) {
     where: {
       teacherProfileId,
       createdAt: { gte: startOfMonth },
+    },
+  });
+}
+
+// Materiales subidos durante el mes natural ANTERIOR (ya cerrado) — base del
+// descuento que se aplica a la cuota de cada renovación mensual.
+export function getPreviousMonthMaterialCount(teacherProfileId: string) {
+  const now = new Date();
+  const startOfPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  return prisma.material.count({
+    where: {
+      teacherProfileId,
+      createdAt: { gte: startOfPreviousMonth, lt: startOfThisMonth },
     },
   });
 }

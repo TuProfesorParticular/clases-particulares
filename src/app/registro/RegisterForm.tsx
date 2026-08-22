@@ -49,7 +49,8 @@ export default function RegisterForm() {
             💡 Si compartes materiales cada mes en tu sección de{" "}
             <span className="font-medium">Materiales</span>, tus planes Pro y
             Premium se abaratan {MATERIAL_DISCOUNT_PER_UPLOAD}€ por cada
-            material que subas ese mes.
+            material que subas ese mes. Es un descuento mes a mes: si un mes
+            no subes nada, la cuota de ese mes vuelve al precio original.
           </p>
         )}
       </fieldset>

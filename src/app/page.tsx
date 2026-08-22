@@ -122,7 +122,9 @@ export default async function HomePage({
           </Link>
         </section>
 
-        {hasActiveSearch ? (
+        <FeaturedTeachers />
+
+        {hasActiveSearch && (
           <>
             <section className="mt-10">
               <Link href="/" className="text-sm text-teal-600 hover:underline">
@@ -166,8 +168,6 @@ export default async function HomePage({
               )}
             </section>
           </>
-        ) : (
-          <FeaturedTeachers />
         )}
 
         <Testimonials />
